@@ -92,7 +92,7 @@ La función $f(x,y)$ es **continua** en todo su dominio $\mathbb{R}^2$.
 
 ### 3.2 Diferenciabilidad
 
-La función $f(x,y)$ es **infinitamente diferenciable** (clase $C^{\infty}$) en todo $\mathbb{R}^2$.
+La función $f(x,y)$ es **infinitamente diferenciable** en todo $\mathbb{R}^2$.
 
 **Justificación**: Las funciones polinomiales son diferenciables en todo su dominio, y la composición y suma de funciones diferenciables es diferenciable. Podemos calcular derivadas parciales de cualquier orden.
 
@@ -145,7 +145,7 @@ $$\frac{\partial^2 f}{\partial x^2} = \frac{\partial}{\partial x}[4x(x^2 - 1)] =
 
 $$\frac{\partial^2 f}{\partial y^2} = \frac{\partial}{\partial y}[4y(y^2 - 2)] = 4(y^2 - 2) + 4y \cdot 2y = 4y^2 - 8 + 8y^2 = 12y^2 - 8$$
 
-**Derivadas cruzadas**:
+**Derivadas mixtas**:
 
 $$\frac{\partial^2 f}{\partial x \partial y} = \frac{\partial}{\partial y}[4x(x^2 - 1)] = 0$$
 
