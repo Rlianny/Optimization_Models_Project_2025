@@ -72,6 +72,7 @@ Las variables $x$ e $y$ son **independientes** entre sí, ya que la función se 
 $$f(x,y) = g(x) + h(y)$$
 
 donde:
+
 - $g(x) = (x^2 - 1)^2$
 - $h(y) = (y^2 - 2)^2$
 
@@ -130,7 +131,7 @@ $$\nabla f(x,y) = \begin{bmatrix} 4x(x^2 - 1) \\ 4y(y^2 - 2) \end{bmatrix}$$
 
 La matriz Hessiana $H_f(x,y)$ contiene las derivadas parciales de segundo orden:
 
-$$H_f(x,y) = \begin{bmatrix} 
+$$H_f(x,y) = \begin{bmatrix}
 \frac{\partial^2 f}{\partial x^2} & \frac{\partial^2 f}{\partial x \partial y} \\
 \frac{\partial^2 f}{\partial y \partial x} & \frac{\partial^2 f}{\partial y^2}
 \end{bmatrix}$$
@@ -153,7 +154,7 @@ $$\frac{\partial^2 f}{\partial y \partial x} = \frac{\partial}{\partial x}[4y(y^
 
 ### 5.2 Matriz Hessiana
 
-$$H_f(x,y) = \begin{bmatrix} 
+$$H_f(x,y) = \begin{bmatrix}
 12x^2 - 4 & 0 \\
 0 & 12y^2 - 8
 \end{bmatrix}$$
@@ -191,18 +192,18 @@ En las regiones donde $|x| < \frac{1}{\sqrt{3}}$ o $|y| < \sqrt{\frac{2}{3}}$, l
 
 1. **Región convexa** (Hessiana semidefinida positiva, ambos $\lambda_i \geq 0$):
    $$R_{\text{convexa}} = \left\{(x,y) : |x| \geq \frac{1}{\sqrt{3}} \text{ Y } |y| \geq \sqrt{\frac{2}{3}}\right\}$$
-   
+
    En esta región, ambos valores propios son no negativos, garantizando convexidad local.
 
 2. **Región cóncava** (Hessiana semidefinida negativa, ambos $\lambda_i \leq 0$):
    $$R_{\text{cóncava}} = \left\{(x,y) : |x| \leq \frac{1}{\sqrt{3}} \text{ Y } |y| \leq \sqrt{\frac{2}{3}}\right\}$$
-   
+
    En esta región, ambos valores propios son no positivos, creando comportamiento localmente cóncavo. El punto $(0,0)$ (máximo local) está en el centro de esta región.
 
 3. **Regiones silla** (Hessiana indefinida, valores propios de signos opuestos):
    - Región donde $|x| < \frac{1}{\sqrt{3}}$ Y $|y| \geq \sqrt{\frac{2}{3}}$: $\lambda_1 < 0$, $\lambda_2 \geq 0$
    - Región donde $|x| \geq \frac{1}{\sqrt{3}}$ Y $|y| < \sqrt{\frac{2}{3}}$: $\lambda_1 \geq 0$, $\lambda_2 < 0$
-   
+
    En estas regiones, la función no es ni convexa ni cóncava. Los puntos silla $(0, \pm\sqrt{2})$ y $(\pm 1, 0)$ se encuentran en estas regiones.
 
 4. **Fronteras de convexidad**:
@@ -330,13 +331,13 @@ $$f(x^*) = 0$$
 
 1. **Cota inferior**: Como $f(x,y) = (x^2-1)^2 + (y^2-2)^2$ es la suma de dos términos al cuadrado, se cumple:
    $$f(x,y) = \underbrace{(x^2-1)^2}_{\geq 0} + \underbrace{(y^2-2)^2}_{\geq 0} \geq 0 \quad \forall (x,y) \in \mathbb{R}^2$$
-   
+
    Por lo tanto, el valor mínimo posible de la función es 0.
 
 2. **Alcanzabilidad**: Este valor mínimo de 0 se alcanza cuando ambos términos son simultáneamente cero:
    $$(x^2-1)^2 = 0 \quad \Rightarrow \quad x^2 = 1 \quad \Rightarrow \quad x = \pm 1$$
    $$(y^2-2)^2 = 0 \quad \Rightarrow \quad y^2 = 2 \quad \Rightarrow \quad y = \pm\sqrt{2}$$
-   
+
    Esto produce exactamente los 4 puntos: $(±1, ±\sqrt{2})$.
 
 3. **Conclusión**: Como $f(x^*) = 0 = \inf_{(x,y) \in \mathbb{R}^2} f(x,y)$ y este ínfimo se alcanza en los 4 puntos mencionados, estos son **mínimos globales**.
@@ -432,17 +433,17 @@ Sin embargo, calcular y invertir la Hessiana es costoso. BFGS construye iterativ
 
 1. **Inicialización**: $k = 0$, $x^{(0)}$, $B_0 = I$ (matriz identidad)
 2. **Iteración**: Para $k = 0, 1, 2, ...$:
-   
+
    a. Calcular dirección de búsqueda: $p_k = -B_k \nabla f(x^{(k)})$
-   
+
    b. Búsqueda de línea: Encontrar $\alpha_k$ que minimice $f(x^{(k)} + \alpha_k p_k)$
-   
+
    c. Actualizar posición: $x^{(k+1)} = x^{(k)} + \alpha_k p_k$
-   
+
    d. Calcular diferencias:
       - $s_k = x^{(k+1)} - x^{(k)}$
       - $y_k = \nabla f(x^{(k+1)}) - \nabla f(x^{(k)})$
-   
+
    e. Actualizar aproximación de la Hessiana inversa (fórmula BFGS):
       $$B_{k+1} = B_k + \frac{(s_k^T y_k + y_k^T B_k y_k)(s_k s_k^T)}{(s_k^T y_k)^2} - \frac{B_k y_k s_k^T + s_k y_k^T B_k}{s_k^T y_k}$$
 
@@ -750,7 +751,7 @@ $$\lambda_{\max} = \max(12 \times 100^2 - 4, 12 \times 100^2 - 8) = 12 \times 10
 Por lo tanto, para garantizar convergencia desde cualquier punto en $[-100, 100] \times [-100, 100]$:
 $$\alpha < \frac{2}{119996} \approx 1.67 \times 10^{-5}$$
 
-**Implicación práctica**: 
+**Implicación práctica**:
 - Con $\alpha = 1.67 \times 10^{-5}$, cada paso sería minúsculo
 - Desde $(100, 100)$ hasta $(1, \sqrt{2})$ (distancia $\approx 140$), se requerirían aproximadamente **8-10 millones de iteraciones**
 - El tiempo de ejecución sería prohibitivo (días o semanas de cómputo)

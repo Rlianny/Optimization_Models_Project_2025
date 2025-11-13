@@ -1,0 +1,1333 @@
+\documentclass[12pt,a4paper]{article}
+
+% Paquetes necesarios
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{geometry}
+\usepackage{fancyhdr}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{float}
+\usepackage{enumitem}
+\usepackage{tikz}
+
+% Configuración de página
+\geometry{
+    a4paper,
+    left=2.5cm,
+    right=2.5cm,
+    top=3cm,
+    bottom=3cm
+}
+
+% Configuración de encabezados y pies de página
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\leftmark}
+\fancyhead[R]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+% Configuración de hipervínculos
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,      
+    urlcolor=cyan,
+    citecolor=green,
+    pdftitle={Informe de Optimización},
+    pdfauthor={},
+}
+
+% Configuración para código
+\lstset{
+    language=Python,
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{blue},
+    commentstyle=\color{gray},
+    stringstyle=\color{red},
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    stepnumber=1,
+    numbersep=5pt,
+    backgroundcolor=\color{white},
+    showspaces=false,
+    showstringspaces=false,
+    showtabs=false,
+    frame=single,
+    tabsize=2,
+    captionpos=b,
+    breaklines=true,
+    breakatwhitespace=false,
+}
+
+% Título y autor
+\title{\textbf{Informe del Proyecto de Optimización:\\Minimización de $f(x,y) = (x^2-1)^2 + (y^2-2)^2$}}
+\author{}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+\newpage
+
+% ============================================================================
+% RESUMEN EJECUTIVO
+% ============================================================================
+\section*{Resumen Ejecutivo}
+\addcontentsline{toc}{section}{Resumen Ejecutivo}
+
+\textbf{Objetivo}: Encontrar el mínimo de la función $f(x,y) = (x^2-1)^2 + (y^2-2)^2$ comparando dos algoritmos de optimización.
+
+\subsection*{Métodos Implementados}
+
+\begin{itemize}
+    \item \textbf{Gradient Descent} (Descenso del Gradiente): Método simple de primer orden
+    \item \textbf{BFGS} (Broyden-Fletcher-Goldfarb-Shanno): Método cuasi-Newton de segundo orden
+\end{itemize}
+
+\subsection*{Configuración Experimental}
+
+\textbf{Rango de Experimentación}: Puntos iniciales en $[-100, 100] \times [-100, 100]$ (10 experimentos)
+
+\textbf{Resultado Teórico}: La función tiene 4 mínimos globales equivalentes en $(\pm 1, \pm\sqrt{2})$ con valor $f^* = 0$.
+
+\subsection*{Resultado Principal}
+
+\begin{itemize}
+    \item[\checkmark] \textbf{BFGS}: 100\% de éxito (10/10 experimentos), promedio 24 iteraciones, precisión $10^{-19}$
+    \item[$\times$] \textbf{Gradient Descent}: 50\% de fallo (5/10 experimentos divergieron), promedio 54 iteraciones cuando funciona, precisión $10^{-14}$
+\end{itemize}
+
+\textbf{Conclusión}: BFGS es el método recomendado para este problema, siendo superior en robustez ($2\times$), eficiencia ($2.3\times$) y precisión ($270\times$).
+
+\newpage
+
+% ============================================================================
+% SECCIÓN 1: DEFINICIÓN DE LA FUNCIÓN
+% ============================================================================
+\section{Definición de la Función, Dominio y Signo}
+
+\subsection{Definición de la Función}
+
+La función objetivo a minimizar es:
+
+\begin{equation}
+f(x,y) = (x^2 - 1)^2 + (y^2 - 2)^2
+\end{equation}
+
+Esta función es una composición de funciones polinomiales de grado cuatro.
+
+\textbf{Tipo de problema}: Este es un problema de \textbf{optimización sin restricciones} (\textit{unconstrained optimization}). No existen restricciones de igualdad ni desigualdad, por lo que no aplican las condiciones de Karush-Kuhn-Tucker (KKT) ni el análisis de restricciones activas.
+
+\subsection{Dominio}
+
+El dominio de la función es:
+
+\begin{equation}
+D_f = \mathbb{R}^2
+\end{equation}
+
+La función está definida para todos los pares ordenados $(x, y) \in \mathbb{R}^2$, ya que no existen restricciones algebraicas (como divisiones por cero, raíces de números negativos, o logaritmos de números no positivos).
+
+\subsection{Signo de la Función}
+
+Dado que $f(x,y)$ es la suma de dos términos elevados al cuadrado:
+
+\begin{equation}
+f(x,y) = \underbrace{(x^2 - 1)^2}_{\geq 0} + \underbrace{(y^2 - 2)^2}_{\geq 0} \geq 0
+\end{equation}
+
+Por lo tanto:
+
+\begin{equation}
+f(x,y) \geq 0 \quad \forall (x,y) \in \mathbb{R}^2
+\end{equation}
+
+La función alcanza su valor mínimo global de 0 cuando ambos términos son simultáneamente cero:
+
+\begin{equation}
+x^2 - 1 = 0 \quad \text{y} \quad y^2 - 2 = 0
+\end{equation}
+
+% ============================================================================
+% SECCIÓN 2: ANÁLISIS DE VARIABLES
+% ============================================================================
+\section{Análisis de las Variables de la Función}
+
+\subsection{Tipo de Variables}
+
+Las variables $x$ e $y$ son \textbf{variables continuas} que toman valores en el conjunto de los números reales $\mathbb{R}$.
+
+\begin{itemize}
+    \item \textbf{Continuas}: Ambas variables pueden tomar cualquier valor real dentro de su dominio, sin restricciones de discreción o valores enteros.
+    \item \textbf{No acotadas}: No existen límites superiores o inferiores para los valores que pueden tomar $x$ e $y$.
+\end{itemize}
+
+\subsection{Independencia de las Variables}
+
+Las variables $x$ e $y$ son \textbf{independientes} entre sí, ya que la función se puede escribir como la suma de dos funciones separables:
+
+\begin{equation}
+f(x,y) = g(x) + h(y)
+\end{equation}
+
+donde:
+\begin{itemize}
+    \item $g(x) = (x^2 - 1)^2$
+    \item $h(y) = (y^2 - 2)^2$
+\end{itemize}
+
+Esta separabilidad implica que el comportamiento de la función respecto a $x$ es independiente del valor de $y$ y viceversa.
+
+% ============================================================================
+% SECCIÓN 3: CONTINUIDAD Y DIFERENCIABILIDAD
+% ============================================================================
+\section{Análisis de Continuidad y Diferenciabilidad}
+
+\subsection{Continuidad}
+
+La función $f(x,y)$ es \textbf{continua} en todo su dominio $\mathbb{R}^2$.
+
+\textbf{Justificación}: $f(x,y)$ es una composición y suma de funciones polinomiales, las cuales son continuas en $\mathbb{R}$. Específicamente:
+
+\begin{itemize}
+    \item $x^2$, $y^2$ son funciones polinomiales continuas
+    \item $(x^2 - 1)$ y $(y^2 - 2)$ son continuas (suma/resta de funciones continuas)
+    \item $(x^2 - 1)^2$ y $(y^2 - 2)^2$ son continuas (composición de funciones continuas)
+    \item La suma de funciones continuas es continua
+\end{itemize}
+
+\subsection{Diferenciabilidad}
+
+La función $f(x,y)$ es \textbf{infinitamente diferenciable} (clase $C^{\infty}$) en todo $\mathbb{R}^2$.
+
+\textbf{Justificación}: Las funciones polinomiales son diferenciables en todo su dominio, y la composición y suma de funciones diferenciables es diferenciable. Podemos calcular derivadas parciales de cualquier orden.
+
+% ============================================================================
+% SECCIÓN 4: GRADIENTE
+% ============================================================================
+\section{Gradiente: $\nabla f(x,y)$}
+
+El gradiente de la función es el vector de derivadas parciales de primer orden:
+
+\begin{equation}
+\nabla f(x,y) = \left[\frac{\partial f}{\partial x}, \frac{\partial f}{\partial y}\right]
+\end{equation}
+
+\subsection{Cálculo de las Derivadas Parciales}
+
+\textbf{Derivada parcial respecto a $x$}:
+
+\begin{equation}
+\frac{\partial f}{\partial x} = \frac{\partial}{\partial x}[(x^2 - 1)^2 + (y^2 - 2)^2]
+\end{equation}
+
+Aplicando la regla de la cadena:
+
+\begin{equation}
+\frac{\partial f}{\partial x} = 2(x^2 - 1) \cdot 2x = 4x(x^2 - 1)
+\end{equation}
+
+\textbf{Derivada parcial respecto a $y$}:
+
+\begin{equation}
+\frac{\partial f}{\partial y} = \frac{\partial}{\partial y}[(x^2 - 1)^2 + (y^2 - 2)^2]
+\end{equation}
+
+Aplicando la regla de la cadena:
+
+\begin{equation}
+\frac{\partial f}{\partial y} = 2(y^2 - 2) \cdot 2y = 4y(y^2 - 2)
+\end{equation}
+
+\subsection{Gradiente}
+
+Por lo tanto, el gradiente es:
+
+\begin{equation}
+\nabla f(x,y) = \begin{bmatrix} 4x(x^2 - 1) \\ 4y(y^2 - 2) \end{bmatrix}
+\end{equation}
+
+% ============================================================================
+% SECCIÓN 5: MATRIZ HESSIANA
+% ============================================================================
+\section{Matriz Hessiana}
+
+La matriz Hessiana $H_f(x,y)$ contiene las derivadas parciales de segundo orden:
+
+\begin{equation}
+H_f(x,y) = \begin{bmatrix} 
+\frac{\partial^2 f}{\partial x^2} & \frac{\partial^2 f}{\partial x \partial y} \\
+\frac{\partial^2 f}{\partial y \partial x} & \frac{\partial^2 f}{\partial y^2}
+\end{bmatrix}
+\end{equation}
+
+\subsection{Cálculo de las Derivadas de Segundo Orden}
+
+\textbf{Derivada segunda respecto a $x$}:
+
+\begin{equation}
+\frac{\partial^2 f}{\partial x^2} = \frac{\partial}{\partial x}[4x(x^2 - 1)] = 4(x^2 - 1) + 4x \cdot 2x = 12x^2 - 4
+\end{equation}
+
+\textbf{Derivada segunda respecto a $y$}:
+
+\begin{equation}
+\frac{\partial^2 f}{\partial y^2} = \frac{\partial}{\partial y}[4y(y^2 - 2)] = 4(y^2 - 2) + 4y \cdot 2y = 12y^2 - 8
+\end{equation}
+
+\textbf{Derivadas cruzadas}:
+
+\begin{equation}
+\frac{\partial^2 f}{\partial x \partial y} = \frac{\partial}{\partial y}[4x(x^2 - 1)] = 0
+\end{equation}
+
+\begin{equation}
+\frac{\partial^2 f}{\partial y \partial x} = \frac{\partial}{\partial x}[4y(y^2 - 2)] = 0
+\end{equation}
+
+\subsection{Matriz Hessiana}
+
+\begin{equation}
+H_f(x,y) = \begin{bmatrix} 
+12x^2 - 4 & 0 \\
+0 & 12y^2 - 8
+\end{bmatrix}
+\end{equation}
+
+La matriz Hessiana es \textbf{diagonal}, lo que confirma la independencia de las variables.
+
+% ============================================================================
+% SECCIÓN 6: ANÁLISIS DE CONVEXIDAD
+% ============================================================================
+\section{Análisis de Convexidad}
+
+\subsection{Condiciones de Convexidad}
+
+Una función es convexa si su Hessiana es semidefinida positiva (todos sus valores propios son no negativos) en todo su dominio.
+
+\subsection{Valores Propios de la Hessiana}
+
+Dado que la Hessiana es diagonal, sus valores propios son simplemente los elementos de la diagonal:
+
+\begin{align}
+\lambda_1 &= 12x^2 - 4\\
+\lambda_2 &= 12y^2 - 8
+\end{align}
+
+\subsection{Análisis de Convexidad}
+
+Para que la función sea convexa globalmente, necesitamos que ambos valores propios sean no negativos para todo $(x,y) \in \mathbb{R}^2$:
+
+\begin{align}
+\lambda_1 = 12x^2 - 4 \geq 0 &\Rightarrow x^2 \geq \frac{1}{3} \Rightarrow |x| \geq \frac{1}{\sqrt{3}}\\
+\lambda_2 = 12y^2 - 8 \geq 0 &\Rightarrow y^2 \geq \frac{2}{3} \Rightarrow |y| \geq \sqrt{\frac{2}{3}}
+\end{align}
+
+\textbf{Conclusión}: La función \textbf{NO es convexa globalmente} en $\mathbb{R}^2$, sino que es convexa solo en la región:
+
+\begin{equation}
+R = \left\{(x,y) : |x| \geq \frac{1}{\sqrt{3}} \text{ y } |y| \geq \sqrt{\frac{2}{3}}\right\}
+\end{equation}
+
+En las regiones donde $|x| < \frac{1}{\sqrt{3}}$ o $|y| < \sqrt{\frac{2}{3}}$, la función es \textbf{no convexa} (la Hessiana no es semidefinida positiva). En particular, cerca del origen $(0,0)$, donde ambos valores propios son negativos, la función presenta comportamiento localmente cóncavo.
+
+\subsection{Clasificación Completa de Regiones}
+
+\begin{enumerate}
+    \item \textbf{Región convexa} (Hessiana semidefinida positiva, ambos $\lambda_i \geq 0$):
+    \begin{equation}
+    R_{\text{convexa}} = \left\{(x,y) : |x| \geq \frac{1}{\sqrt{3}} \text{ Y } |y| \geq \sqrt{\frac{2}{3}}\right\}
+    \end{equation}
+    En esta región, ambos valores propios son no negativos, garantizando convexidad local.
+    
+    \item \textbf{Región cóncava} (Hessiana semidefinida negativa, ambos $\lambda_i \leq 0$):
+    \begin{equation}
+    R_{\text{cóncava}} = \left\{(x,y) : |x| \leq \frac{1}{\sqrt{3}} \text{ Y } |y| \leq \sqrt{\frac{2}{3}}\right\}
+    \end{equation}
+    En esta región, ambos valores propios son no positivos, creando comportamiento localmente cóncavo. El punto $(0,0)$ (máximo local) está en el centro de esta región.
+    
+    \item \textbf{Regiones silla} (Hessiana indefinida, valores propios de signos opuestos):
+    \begin{itemize}
+        \item Región donde $|x| < \frac{1}{\sqrt{3}}$ Y $|y| \geq \sqrt{\frac{2}{3}}$: $\lambda_1 < 0$, $\lambda_2 \geq 0$
+        \item Región donde $|x| \geq \frac{1}{\sqrt{3}}$ Y $|y| < \sqrt{\frac{2}{3}}$: $\lambda_1 \geq 0$, $\lambda_2 < 0$
+    \end{itemize}
+    En estas regiones, la función no es ni convexa ni cóncava. Los puntos silla $(0, \pm\sqrt{2})$ y $(\pm 1, 0)$ se encuentran en estas regiones.
+    
+    \item \textbf{Fronteras de convexidad}:
+    \begin{itemize}
+        \item Líneas verticales: $x = \pm\frac{1}{\sqrt{3}} \approx \pm 0.577$
+        \item Líneas horizontales: $y = \pm\sqrt{\frac{2}{3}} \approx \pm 0.816$
+    \end{itemize}
+\end{enumerate}
+
+\subsection{Implicaciones}
+
+La no convexidad global implica que:
+\begin{itemize}
+    \item Los métodos de optimización basados en gradiente podrían converger a diferentes soluciones dependiendo del punto inicial (existen 4 mínimos globales equivalentes)
+    \item Existen puntos silla que podrían ralentizar o afectar la convergencia
+    \item Se requiere un análisis cuidadoso de los puntos estacionarios
+    \item \textbf{Nota importante}: Aunque la función no es convexa globalmente, el análisis de la Hessiana (sección 8) demuestra que no existen mínimos locales que no sean globales. Todos los mínimos encontrados son mínimos globales.
+\end{itemize}
+
+% ============================================================================
+% SECCIÓN 7: DETERMINACIÓN DEL MÍNIMO TEÓRICO
+% ============================================================================
+\section{Determinación del Mínimo Teórico}
+
+\subsection{Puntos Estacionarios}
+
+\textbf{Nota terminológica importante}:
+
+Según las definiciones en optimización:
+\begin{itemize}
+    \item \textbf{Punto crítico (en cálculo)}: Aquellos donde la derivada es indefinida (no existe)
+    \item \textbf{Punto estacionario}: Aquellos donde el gradiente es cero ($\nabla f = 0$)
+\end{itemize}
+
+En este problema:
+\begin{itemize}
+    \item La función $f(x,y)$ es de clase $C^{\infty}$ (infinitamente diferenciable en todo $\mathbb{R}^2$)
+    \item Por lo tanto, \textbf{NO existen puntos críticos} (la derivada existe en todos los puntos)
+    \item Los puntos que buscamos son \textbf{puntos estacionarios} donde $\nabla f(x,y) = 0$
+\end{itemize}
+
+\textbf{Justificación de ausencia de puntos críticos}: La función $f(x,y) = (x^2-1)^2 + (y^2-2)^2$ es una composición de polinomios. Específicamente:
+\begin{itemize}
+    \item Los términos $x^2$, $y^2$ son polinomios (funciones $C^{\infty}$)
+    \item Las sumas $(x^2-1)$ y $(y^2-2)$ son polinomios
+    \item Las composiciones $(x^2-1)^2$ y $(y^2-2)^2$ son polinomios de grado 4
+    \item La suma de polinomios es un polinomio
+\end{itemize}
+
+Como los polinomios son infinitamente diferenciables en todo $\mathbb{R}$, la función $f$ es infinitamente diferenciable en todo $\mathbb{R}^2$. Por lo tanto, no existen puntos donde la derivada sea indefinida.
+
+Los puntos estacionarios se encuentran donde el gradiente es cero:
+
+\begin{equation}
+\nabla f(x,y) = \begin{bmatrix} 4x(x^2 - 1) \\ 4y(y^2 - 2) \end{bmatrix} = \begin{bmatrix} 0 \\ 0 \end{bmatrix}
+\end{equation}
+
+Esto requiere:
+
+\begin{align}
+4x(x^2 - 1) = 0 &\quad \Rightarrow \quad x = 0 \text{ o } x = \pm 1\\
+4y(y^2 - 2) = 0 &\quad \Rightarrow \quad y = 0 \text{ o } y = \pm\sqrt{2}
+\end{align}
+
+\subsection{Lista de Puntos Estacionarios}
+
+Combinando todas las posibilidades, obtenemos 9 puntos estacionarios:
+
+\begin{enumerate}
+    \item $(0, 0)$
+    \item $(0, \sqrt{2})$
+    \item $(0, -\sqrt{2})$
+    \item $(1, 0)$
+    \item $(1, \sqrt{2})$
+    \item $(1, -\sqrt{2})$
+    \item $(-1, 0)$
+    \item $(-1, \sqrt{2})$
+    \item $(-1, -\sqrt{2})$
+\end{enumerate}
+
+% ============================================================================
+% SECCIÓN 8: ANÁLISIS DE PUNTOS ESTACIONARIOS
+% ============================================================================
+\section{Análisis de los Puntos Estacionarios}
+
+\subsection{Clasificación mediante el Criterio de la Hessiana}
+
+Para clasificar cada punto estacionario, evaluamos la Hessiana en cada punto y analizamos sus valores propios.
+
+\subsubsection*{Punto (0, 0)}
+
+\begin{equation}
+H_f(0,0) = \begin{bmatrix} -4 & 0 \\ 0 & -8 \end{bmatrix}
+\end{equation}
+
+Valores propios: $\lambda_1 = -4 < 0$, $\lambda_2 = -8 < 0$ $\rightarrow$ \textbf{Máximo local}
+
+\begin{equation}
+f(0,0) = (0-1)^2 + (0-2)^2 = 1 + 4 = 5
+\end{equation}
+
+\subsubsection*{Punto $(0, \pm\sqrt{2})$}
+
+\begin{equation}
+H_f(0, \pm\sqrt{2}) = \begin{bmatrix} -4 & 0 \\ 0 & 16 \end{bmatrix}
+\end{equation}
+
+Valores propios: $\lambda_1 = -4 < 0$, $\lambda_2 = 16 > 0$ $\rightarrow$ \textbf{Punto silla}
+
+\begin{equation}
+f(0, \pm\sqrt{2}) = (0-1)^2 + (2-2)^2 = 1
+\end{equation}
+
+\subsubsection*{Punto $(\pm 1, 0)$}
+
+\begin{equation}
+H_f(\pm 1, 0) = \begin{bmatrix} 8 & 0 \\ 0 & -8 \end{bmatrix}
+\end{equation}
+
+Valores propios: $\lambda_1 = 8 > 0$, $\lambda_2 = -8 < 0$ $\rightarrow$ \textbf{Punto silla}
+
+\begin{equation}
+f(\pm 1, 0) = (1-1)^2 + (0-2)^2 = 4
+\end{equation}
+
+\subsubsection*{Punto $(\pm 1, \pm\sqrt{2})$}
+
+\begin{equation}
+H_f(\pm 1, \pm\sqrt{2}) = \begin{bmatrix} 8 & 0 \\ 0 & 16 \end{bmatrix}
+\end{equation}
+
+Valores propios: $\lambda_1 = 8 > 0$, $\lambda_2 = 16 > 0$ $\rightarrow$ \textbf{Mínimo local} (que también es \textbf{mínimo global}, como se demuestra en la Sección 9.1)
+
+\begin{equation}
+f(\pm 1, \pm\sqrt{2}) = (1-1)^2 + (2-2)^2 = 0
+\end{equation}
+
+\subsection{Resumen de la Clasificación}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{@{}lcc@{}}
+\toprule
+\textbf{Punto} & \textbf{Tipo} & \textbf{f(x,y)} \\ \midrule
+$(0, 0)$ & Máximo local & 5 \\
+$(0, \sqrt{2})$ & Punto silla & 1 \\
+$(0, -\sqrt{2})$ & Punto silla & 1 \\
+$(1, 0)$ & Punto silla & 4 \\
+$(-1, 0)$ & Punto silla & 4 \\
+$(1, \sqrt{2})$ & \textbf{Mínimo global} & \textbf{0} \\
+$(1, -\sqrt{2})$ & \textbf{Mínimo global} & \textbf{0} \\
+$(-1, \sqrt{2})$ & \textbf{Mínimo global} & \textbf{0} \\
+$(-1, -\sqrt{2})$ & \textbf{Mínimo global} & \textbf{0} \\ \bottomrule
+\end{tabular}
+\caption{Clasificación de puntos estacionarios}
+\end{table}
+
+% ============================================================================
+% SECCIÓN 9: ANÁLISIS DEL ÓPTIMO
+% ============================================================================
+\section{Análisis del Óptimo}
+
+\subsection{Mínimos Globales}
+
+La función tiene \textbf{cuatro mínimos globales} con el mismo valor:
+
+\begin{equation}
+x^* \in \{(1, \sqrt{2}), (1, -\sqrt{2}), (-1, \sqrt{2}), (-1, -\sqrt{2})\}
+\end{equation}
+
+\begin{equation}
+f(x^*) = 0
+\end{equation}
+
+\subsubsection*{Demostración de que son mínimos globales}
+
+\begin{enumerate}
+    \item \textbf{Cota inferior}: Como $f(x,y) = (x^2-1)^2 + (y^2-2)^2$ es la suma de dos términos al cuadrado, se cumple:
+    \begin{equation}
+    f(x,y) = \underbrace{(x^2-1)^2}_{\geq 0} + \underbrace{(y^2-2)^2}_{\geq 0} \geq 0 \quad \forall (x,y) \in \mathbb{R}^2
+    \end{equation}
+    Por lo tanto, el valor mínimo posible de la función es 0.
+    
+    \item \textbf{Alcanzabilidad}: Este valor mínimo de 0 se alcanza cuando ambos términos son simultáneamente cero:
+    \begin{align}
+    (x^2-1)^2 = 0 &\quad \Rightarrow \quad x^2 = 1 \quad \Rightarrow \quad x = \pm 1\\
+    (y^2-2)^2 = 0 &\quad \Rightarrow \quad y^2 = 2 \quad \Rightarrow \quad y = \pm\sqrt{2}
+    \end{align}
+    Esto produce exactamente los 4 puntos: $(\pm 1, \pm\sqrt{2})$.
+    
+    \item \textbf{Conclusión}: Como $f(x^*) = 0 = \inf_{(x,y) \in \mathbb{R}^2} f(x,y)$ y este ínfimo se alcanza en los 4 puntos mencionados, estos son \textbf{mínimos globales}.
+\end{enumerate}
+
+\textbf{Implicación importante}: Debido a que $f(x,y) \geq 0$ para todo $(x,y) \in \mathbb{R}^2$, no pueden existir mínimos locales con valores mayores que 0. Cualquier punto estacionario que sea un mínimo local debe tener valor 0, y por tanto, es un mínimo global.
+
+\subsection{Interpretación Geométrica}
+
+Estos cuatro mínimos corresponden a las cuatro combinaciones de signos que satisfacen:
+\begin{itemize}
+    \item $x^2 = 1 \Rightarrow x = \pm 1$
+    \item $y^2 = 2 \Rightarrow y = \pm\sqrt{2}$
+\end{itemize}
+
+La existencia de múltiples mínimos globales es consistente con la estructura simétrica de la función y su no convexidad en ciertas regiones.
+
+\subsection{Características del Óptimo}
+
+\begin{itemize}
+    \item \textbf{Valor óptimo}: $f^* = 0$
+    \item \textbf{Número de soluciones óptimas}: 4 (simétricamente distribuidas)
+    \item \textbf{Naturaleza}: Mínimos globales estrictos localmente (cada uno es el único mínimo en su vecindad)
+\end{itemize}
+
+\newpage
+
+% ============================================================================
+% SECCIÓN 10: DESCRIPCIÓN DE LOS ALGORITMOS UTILIZADOS
+% ============================================================================
+\section{Descripción de los Algoritmos Utilizados}
+
+\subsection{Método del Descenso del Gradiente (Gradient Descent)}
+
+\subsubsection{Descripción General}
+
+El método del Descenso del Gradiente es un algoritmo iterativo de optimización de primer orden que se mueve en la dirección opuesta al gradiente para encontrar un mínimo local de una función.
+
+\subsubsection{Fundamento Matemático}
+
+El gradiente $\nabla f(x)$ apunta en la dirección de mayor crecimiento de la función. Por lo tanto, el negativo del gradiente $-\nabla f(x)$ apunta en la dirección de mayor decrecimiento, lo que lo convierte en una dirección de descenso.
+
+\subsubsection{Algoritmo}
+
+Dado un punto inicial $x^{(0)}$ y una tasa de aprendizaje $\alpha > 0$:
+
+\begin{enumerate}
+    \item \textbf{Inicialización}: $k = 0$, $x = x^{(0)}$
+    \item \textbf{Iteración}: Mientras $\|\nabla f(x^{(k)})\| > \epsilon$ y $k < k_{\max}$:
+    \begin{equation}
+        x^{(k+1)} = x^{(k)} - \alpha \nabla f(x^{(k)})
+    \end{equation}
+    \begin{equation}
+        k = k + 1
+    \end{equation}
+    \item \textbf{Terminación}: Retornar $x^{(k)}$ como aproximación del mínimo
+\end{enumerate}
+
+\subsubsection{Parámetros}
+
+\begin{itemize}
+    \item \textbf{learning\_rate} ($\alpha$): Controla el tamaño del paso en cada iteración
+    \begin{itemize}
+        \item Valores muy grandes: Pueden causar divergencia u oscilaciones
+        \item Valores muy pequeños: Convergencia lenta
+        \item Típicamente: $0.001 \leq \alpha \leq 0.1$
+    \end{itemize}
+    
+    \item \textbf{tol} ($\epsilon$): Tolerancia para el criterio de parada basado en la norma del gradiente
+    \begin{itemize}
+        \item Cuando $\|\nabla f(x)\| < \epsilon$, se considera que se ha alcanzado un punto crítico
+        \item Típicamente: $10^{-6} \leq \epsilon \leq 10^{-4}$
+    \end{itemize}
+    
+    \item \textbf{max\_iter} ($k_{\max}$): Número máximo de iteraciones para evitar bucles infinitos
+\end{itemize}
+
+\subsubsection{Ventajas}
+
+\begin{itemize}
+    \item Simple de implementar
+    \item Bajo costo computacional por iteración
+    \item Requiere solo el cálculo del gradiente (derivadas de primer orden)
+    \item Garantiza descenso en cada iteración (con $\alpha$ apropiado)
+\end{itemize}
+
+\subsubsection{Desventajas}
+
+\begin{itemize}
+    \item Convergencia puede ser lenta, especialmente cerca del óptimo
+    \item Sensible a la elección de la tasa de aprendizaje
+    \item Puede atascarse en mínimos locales o puntos silla
+    \item No es eficiente para funciones mal condicionadas
+\end{itemize}
+
+\subsubsection{Justificación de Selección}
+
+Se seleccionó este algoritmo porque:
+\begin{enumerate}
+    \item \textbf{Simplicidad}: Es el método de optimización basado en gradiente más fundamental
+    \item \textbf{Referencia}: Sirve como línea base para comparar con métodos más sofisticados
+    \item \textbf{Interpretabilidad}: Su comportamiento es fácil de entender y visualizar
+    \item \textbf{Aplicabilidad}: Funciona bien para funciones suaves y diferenciables como nuestra función objetivo
+\end{enumerate}
+
+\subsection{Método Cuasi-Newton BFGS}
+
+\subsubsection{Descripción General}
+
+BFGS (Broyden-Fletcher-Goldfarb-Shanno) es un método cuasi-Newton que aproxima la matriz Hessiana inversa para encontrar direcciones de búsqueda más eficientes que el gradiente puro.
+
+\subsubsection{Fundamento Matemático}
+
+Los métodos de Newton utilizan información de segundo orden (la Hessiana) para encontrar la dirección de búsqueda:
+
+\begin{equation}
+    x^{(k+1)} = x^{(k)} - H_f^{-1}(x^{(k)}) \nabla f(x^{(k)})
+\end{equation}
+
+Sin embargo, calcular y invertir la Hessiana es costoso. BFGS construye iterativamente una aproximación $B_k$ de $H_f^{-1}$ usando solo evaluaciones del gradiente.
+
+\subsubsection{Algoritmo}
+
+\begin{enumerate}
+    \item \textbf{Inicialización}: $k = 0$, $x^{(0)}$, $B_0 = I$ (matriz identidad)
+    \item \textbf{Iteración}: Para $k = 0, 1, 2, \ldots$:
+    \begin{enumerate}[label=\alph*.]
+        \item Calcular dirección de búsqueda: $p_k = -B_k \nabla f(x^{(k)})$
+        \item Búsqueda de línea: Encontrar $\alpha_k$ que minimice $f(x^{(k)} + \alpha_k p_k)$
+        \item Actualizar posición: $x^{(k+1)} = x^{(k)} + \alpha_k p_k$
+        \item Calcular diferencias:
+        \begin{itemize}
+            \item $s_k = x^{(k+1)} - x^{(k)}$
+            \item $y_k = \nabla f(x^{(k+1)}) - \nabla f(x^{(k)})$
+        \end{itemize}
+        \item Actualizar aproximación de la Hessiana inversa (fórmula BFGS):
+        \begin{equation}
+            B_{k+1} = B_k + \frac{(s_k^T y_k + y_k^T B_k y_k)(s_k s_k^T)}{(s_k^T y_k)^2} - \frac{B_k y_k s_k^T + s_k y_k^T B_k}{s_k^T y_k}
+        \end{equation}
+    \end{enumerate}
+    \item \textbf{Terminación}: Cuando $\|\nabla f(x^{(k)})\| < \epsilon$ o $k \geq k_{\max}$
+\end{enumerate}
+
+\subsubsection{Implementación}
+
+Se utiliza la implementación de \texttt{scipy.optimize.minimize} con \texttt{method='BFGS'}, que incluye:
+\begin{itemize}
+    \item Búsqueda de línea robusta (condiciones de Wolfe)
+    \item Manejo numérico estable de la actualización BFGS
+    \item Criterios de convergencia sofisticados
+\end{itemize}
+
+\subsubsection{Parámetros}
+
+\begin{itemize}
+    \item \textbf{tol}: Tolerancia para convergencia del gradiente
+    \item \textbf{max\_iter}: Número máximo de iteraciones
+    \item No requiere especificar learning\_rate (se determina automáticamente mediante búsqueda de línea)
+\end{itemize}
+
+\subsubsection{Ventajas}
+
+\begin{itemize}
+    \item \textbf{Convergencia superlineal}: Mucho más rápida que el descenso del gradiente cerca del óptimo
+    \item \textbf{Adaptativo}: La búsqueda de línea ajusta automáticamente el tamaño del paso
+    \item \textbf{Curvatura}: Utiliza información de segundo orden sin calcular explícitamente la Hessiana
+    \item \textbf{Eficiente}: Requiere menos iteraciones que métodos de primer orden
+    \item \textbf{Robusto}: La implementación de SciPy incluye salvaguardas numéricas
+\end{itemize}
+
+\subsubsection{Desventajas}
+
+\begin{itemize}
+    \item Más complejo de implementar desde cero
+    \item Mayor costo computacional por iteración (actualización de $B_k$)
+    \item Requiere almacenar una matriz $n \times n$ (donde $n$ es la dimensión)
+    \item Puede fallar si la función no es suficientemente suave
+\end{itemize}
+
+\subsubsection{Justificación de Selección}
+
+Se seleccionó BFGS porque:
+\begin{enumerate}
+    \item \textbf{Eficiencia}: Es uno de los métodos cuasi-Newton más efectivos y ampliamente utilizados
+    \item \textbf{Estado del arte}: Representa el estándar industrial para optimización no lineal sin restricciones
+    \item \textbf{Comparación}: Permite contrastar un método sofisticado de segundo orden con el simple descenso del gradiente
+    \item \textbf{Biblioteca}: La implementación en SciPy es robusta y bien probada
+    \item \textbf{Aplicabilidad}: Nuestra función es suave (clase $C^{\infty}$), ideal para BFGS
+\end{enumerate}
+
+\newpage
+
+% ============================================================================
+% SECCIÓN 11: COMPARACIÓN DE RESULTADOS
+% ============================================================================
+\section{Comparación de Resultados}
+
+\subsection{Criterios de Comparación}
+
+Los métodos se comparan según:
+
+\begin{enumerate}
+    \item \textbf{Número de iteraciones}: ¿Cuántos pasos requiere cada método para converger?
+    \item \textbf{Tiempo de ejecución}: ¿Cuánto tiempo toma la optimización?
+    \item \textbf{Valor final de la función}: ¿Qué tan cerca está del mínimo teórico?
+    \item \textbf{Punto final}: ¿A cuál de los cuatro mínimos globales converge?
+    \item \textbf{Sensibilidad al punto inicial}: ¿Cómo afecta $x^{(0)}$ al resultado?
+    \item \textbf{Impacto del learning rate}: (Solo para Gradient Descent) ¿Cómo afecta $\alpha$ a la convergencia?
+\end{enumerate}
+
+\subsection{Experimentos Diseñados}
+
+\textbf{Nota}: Los experimentos cubren el rango completo $[-100, 100]$ para ambas variables, según los requisitos del proyecto.
+
+\begin{table}[H]
+\centering
+\caption{Configuración de Experimentos}
+\label{tab:experimentos}
+\begin{tabular}{@{}llcl@{}}
+\toprule
+\textbf{Exp.} & \textbf{Punto Inicial} & \textbf{Learning Rate} & \textbf{Objetivo} \\
+\midrule
+exp1 & $(0.5, 0.5)$ & $0.1$ & Región no convexa central \\
+exp2 & $(-1.5, -1.0)$ & $0.05$ & Región convexa \\
+exp3 & $(100, 100)$ & $0.05$ & Extremo superior derecho \\
+exp4 & $(-100, -100)$ & $0.05$ & Extremo inferior izquierdo \\
+exp5 & $(100, -100)$ & $0.05$ & Extremo inferior derecho \\
+exp6 & $(-100, 100)$ & $0.05$ & Extremo superior izquierdo \\
+exp7 & $(0.1, 0.1)$ & $0.05$ & Cerca del máximo local \\
+exp8 & $(0.05, \sqrt{2})$ & $0.03$ & Cerca de punto silla \\
+exp9 & $(1.0, 0.05)$ & $0.03$ & Cerca de otro punto silla \\
+exp10 & $(50, -75)$ & $0.05$ & Punto intermedio alejado \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Resultados de los Experimentos}
+
+\subsubsection{Resultados Experimentales Obtenidos}
+
+Tras ejecutar los 10 experimentos diseñados, se obtuvieron los siguientes resultados:
+
+\begin{table}[H]
+\centering
+\caption{Tabla de Convergencia General}
+\label{tab:resultados}
+\small
+\begin{tabular}{@{}lcccccc@{}}
+\toprule
+\textbf{Exp.} & \textbf{Punto Inicial} & \textbf{GD Min} & \textbf{GD Iter} & \textbf{GD $f(x)$} & \textbf{BFGS Min} & \textbf{BFGS Iter} \\
+\midrule
+exp1 & $(0.5, 0.5)$ & 1 & 31 & $2.4\times10^{-14}$ & 1 & 8 \\
+exp2 & $(-1.5, -1.0)$ & 4 & 29 & $3.6\times10^{-14}$ & 4 & 10 \\
+\textbf{exp3} & \textbf{(100, 100)} & \textbf{DIV} & \textbf{5000} & \textbf{NaN} & \textbf{1} & \textbf{42} \\
+\textbf{exp4} & \textbf{(-100, -100)} & \textbf{DIV} & \textbf{5000} & \textbf{NaN} & \textbf{4} & \textbf{42} \\
+\textbf{exp5} & \textbf{(100, -100)} & \textbf{DIV} & \textbf{5000} & \textbf{NaN} & \textbf{2} & \textbf{42} \\
+\textbf{exp6} & \textbf{(-100, 100)} & \textbf{DIV} & \textbf{5000} & \textbf{NaN} & \textbf{3} & \textbf{42} \\
+exp7 & $(0.1, 0.1)$ & 1 & 44 & $3.8\times10^{-14}$ & 1 & 8 \\
+exp8 & $(0.05, \sqrt{2})$ & 1 & 83 & $5.9\times10^{-14}$ & 1 & 6 \\
+exp9 & $(1.0, 0.05)$ & 1 & 42 & $1.8\times10^{-14}$ & 1 & 4 \\
+\textbf{exp10} & \textbf{(50, -75)} & \textbf{DIV} & \textbf{4000} & \textbf{NaN} & \textbf{2} & \textbf{37} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Leyenda de Mínimos}:
+\begin{itemize}
+    \item Mínimo 1: $(1, \sqrt{2})$
+    \item Mínimo 2: $(1, -\sqrt{2})$
+    \item Mínimo 3: $(-1, \sqrt{2})$
+    \item Mínimo 4: $(-1, -\sqrt{2})$
+    \item DIV: Divergencia por overflow
+\end{itemize}
+
+\subsubsection{Hallazgos Importantes}
+
+\paragraph{1. Falla Masiva del Gradient Descent en Puntos Alejados}
+
+El resultado más crítico del estudio: \textbf{Gradient Descent falló en 5 de 10 experimentos (50\% tasa de fallo)}.
+
+\textbf{Experimentos con divergencia}:
+\begin{itemize}
+    \item exp3 $(100, 100)$: Divergencia por overflow
+    \item exp4 $(-100, -100)$: Divergencia por overflow
+    \item exp5 $(100, -100)$: Divergencia por overflow
+    \item exp6 $(-100, 100)$: Divergencia por overflow
+    \item exp10 $(50, -75)$: Divergencia por overflow
+\end{itemize}
+
+\textbf{Patrón identificado}: Todos los puntos iniciales con $|x| \geq 50$ o $|y| \geq 75$ causaron divergencia.
+
+\textbf{Causa raíz}: El gradiente crece cúbicamente con la distancia:
+\begin{equation}
+    \|\nabla f(x,y)\| \approx 4\sqrt{x^6 + y^6} \text{ para } |x|, |y| \gg 1
+\end{equation}
+
+En $(100, 100)$: $\|\nabla f\| \approx 5.7 \times 10^7$
+
+Con $\alpha = 0.05$, el paso es $\Delta x \approx 2.8 \times 10^6$, causando overflow explosivo.
+
+\textbf{Cálculo del learning rate óptimo teórico}:
+
+Para garantizar convergencia en Gradient Descent con learning rate fijo, se requiere que:
+\begin{equation}
+    \alpha < \frac{2}{\lambda_{\max}(H)}
+\end{equation}
+
+donde $\lambda_{\max}(H)$ es el mayor valor propio de la Hessiana en cualquier punto de la trayectoria.
+
+En puntos extremos como $(100, 100)$:
+\begin{equation}
+    \lambda_{\max} = 12 \times 100^2 - 4 = 119996
+\end{equation}
+
+Por lo tanto, para garantizar convergencia desde cualquier punto en $[-100, 100] \times [-100, 100]$:
+\begin{equation}
+    \alpha < \frac{2}{119996} \approx 1.67 \times 10^{-5}
+\end{equation}
+
+\textbf{Implicación práctica}:
+\begin{itemize}
+    \item Con $\alpha = 1.67 \times 10^{-5}$, cada paso sería minúsculo
+    \item Desde $(100, 100)$ hasta $(1, \sqrt{2})$ (distancia $\approx 140$), se requerirían aproximadamente \textbf{8-10 millones de iteraciones}
+    \item El tiempo de ejecución sería prohibitivo (días o semanas de cómputo)
+\end{itemize}
+
+\textbf{Conclusión}: Gradient Descent con learning rate fijo es \textbf{matemáticamente inviable} para el rango completo $[-100, 100]$. Se requiere obligatoriamente learning rate adaptativo.
+
+\textbf{Contraste dramático}: BFGS convergió exitosamente en \textbf{TODOS} los casos, incluyendo los 5 donde GD falló.
+
+\paragraph{2. Tasa de Éxito Real}
+
+\begin{table}[H]
+\centering
+\caption{Tasa de Éxito por Método}
+\begin{tabular}{@{}lccc@{}}
+\toprule
+\textbf{Método} & \textbf{Éxitos} & \textbf{Fallos} & \textbf{Tasa de Éxito} \\
+\midrule
+\textbf{Gradient Descent} & 5/10 & 5/10 & \textbf{50\%} \\
+\textbf{BFGS} & 10/10 & 0/10 & \textbf{100\%} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Conclusión crítica}: Gradient Descent simple \textbf{NO es confiable} para el rango $[-100, 100]$.
+
+\paragraph{3. Eficiencia Comparativa (Solo Casos Exitosos)}
+
+\textbf{Iteraciones}:
+\begin{itemize}
+    \item GD: Promedio = 54 iteraciones (solo 5 casos exitosos)
+    \item BFGS: Promedio = 24 iteraciones (10 casos, todos exitosos)
+    \item \textbf{BFGS es $\sim$2.3× más rápido} cuando GD funciona
+    \item \textbf{BFGS es infinitamente mejor} considerando las divergencias de GD
+\end{itemize}
+
+\textbf{Precisión}:
+\begin{itemize}
+    \item GD: Mejor = $1.8\times10^{-14}$ (solo casos exitosos)
+    \item BFGS: Mejor = $6.7\times10^{-19}$
+    \item \textbf{BFGS logra $\sim$270× mejor precisión}
+\end{itemize}
+
+\paragraph{4. Comportamiento en Casos Problemáticos}
+
+\textbf{Cerca del Máximo Local} (exp7: $x_0 = (0.1, 0.1)$):
+\begin{itemize}
+    \item GD: 44 iteraciones $\checkmark$ \textbf{EXITOSO}
+    \item BFGS: 8 iteraciones $\checkmark$ \textbf{EXITOSO}
+    \item Ambos escapan exitosamente del máximo local
+\end{itemize}
+
+\textbf{Cerca de Puntos Silla} (exp8, exp9):
+\begin{itemize}
+    \item GD: 42-83 iteraciones $\checkmark$ \textbf{EXITOSO}
+    \item BFGS: 4-6 iteraciones $\checkmark$ \textbf{EXITOSO}
+    \item Los puntos silla no impiden convergencia, solo la ralentizan
+\end{itemize}
+
+\textbf{Puntos Extremos} (exp3-exp6: $|x| = 100$ o $|y| = 100$):
+\begin{itemize}
+    \item GD: \textbf{100\% DIVERGENCIA} $\times$ (4 de 4 experimentos)
+    \item BFGS: \textbf{100\% ÉXITO} $\checkmark$ (4 de 4 experimentos, 42 iteraciones)
+    \item \textbf{Hallazgo crítico}: GD es \textbf{incapaz} de manejar puntos alejados con LR fijo
+\end{itemize}
+
+\newpage
+
+% ============================================================================
+% SECCIÓN 12: VISUALIZACIÓN
+% ============================================================================
+\section{Visualización del Modelo y las Instancias de los Algoritmos}
+
+\subsection{Gráficos de Contorno}
+
+Los gráficos de contorno muestran:
+\begin{itemize}
+    \item \textbf{Curvas de nivel}: Líneas de igual valor de la función $f(x,y)$
+    \item \textbf{Trayectoria}: Puntos visitados por cada algoritmo (conectados por líneas)
+    \item \textbf{Mínimo teórico}: Marcado con una estrella verde
+\end{itemize}
+
+\subsection{Interpretación Visual}
+
+\begin{itemize}
+    \item \textbf{Gradient Descent} (rojo): Trayectoria más larga, pasos más pequeños cerca del óptimo
+    \item \textbf{BFGS} (azul): Trayectoria más corta y directa
+    \item \textbf{Curvas de nivel}: Muestran la topología de la función, incluyendo los cuatro mínimos globales
+\end{itemize}
+
+\subsection{Información Revelada}
+
+Los gráficos permiten visualizar:
+\begin{enumerate}
+    \item La naturaleza no convexa de la función en ciertas regiones
+    \item La estructura simétrica con cuatro mínimos
+    \item La presencia de puntos silla y el máximo local en el origen
+    \item La eficiencia relativa de cada método
+    \item El comportamiento de convergencia en diferentes regiones del espacio
+\end{enumerate}
+
+% ============================================================================
+% SECCIÓN 13: CONCLUSIONES
+% ============================================================================
+\section{Conclusiones}
+
+\subsection{Sobre la Función}
+
+\begin{itemize}
+    \item La función tiene estructura cuártica no convexa globalmente
+    \item Existen 4 mínimos globales equivalentes y varios puntos silla
+    \item La separabilidad simplifica el análisis pero la no convexidad introduce complejidad
+\end{itemize}
+
+\subsection{Sobre los Métodos}
+
+\begin{itemize}
+    \item \textbf{Gradient Descent}: Simple pero ineficiente, adecuado para problemas simples o como método base
+    \item \textbf{BFGS}: Superior en casi todos los aspectos, es la elección preferida para este tipo de problemas
+\end{itemize}
+
+\subsection{Recomendaciones}
+
+Para minimizar funciones suaves no lineales:
+\begin{enumerate}
+    \item Usar métodos cuasi-Newton (BFGS) cuando sea posible
+    \item Probar múltiples puntos iniciales para explorar diferentes cuencas de atracción
+    \item Considerar la topología de la función (convexidad, múltiples mínimos)
+    \item Ajustar cuidadosamente los hiperparámetros en métodos de primer orden
+\end{enumerate}
+
+\subsection{Consideraciones Finales}
+
+Este estudio demuestra la importancia de:
+\begin{itemize}
+    \item Análisis teórico exhaustivo antes de aplicar algoritmos
+    \item Comparación empírica de múltiples métodos
+    \item Visualización para entender el comportamiento de los algoritmos
+    \item Documentación clara de decisiones y resultados
+\end{itemize}
+
+\subsection{Validación del Rango de Experimentación}
+
+Los experimentos realizados cubren el rango completo $[-100, 100]$ para ambas variables, conforme a los requisitos del proyecto:
+
+\textbf{Cobertura del espacio}:
+\begin{itemize}
+    \item Experimentos en los 4 cuadrantes
+    \item Puntos extremos: $(\pm 100, \pm 100)$
+    \item Puntos intermedios: diversos valores entre $-100$ y $100$
+    \item Casos problemáticos: cerca de puntos estacionarios no mínimos
+    \item Regiones convexas y no convexas
+\end{itemize}
+
+\subsection{Aclaraciones Terminológicas Importantes}
+
+Conforme a las definiciones estándar en optimización:
+
+\begin{enumerate}
+    \item \textbf{Puntos críticos (en cálculo)}: Aquellos donde la derivada es indefinida (no existe). En este problema, la función es $C^{\infty}$ (infinitamente diferenciable), por lo que \textbf{NO existen puntos críticos}.
+    
+    \item \textbf{Puntos estacionarios}: Aquellos donde el gradiente es cero ($\nabla f = 0$). En optimización con restricciones, también incluye puntos que satisfacen las condiciones de KKT. En este problema sin restricciones, coinciden con los puntos donde $\nabla f = 0$.
+    
+    \item \textbf{Puntos críticos en optimización con restricciones}: Puntos donde la función objetivo es combinación lineal de las restricciones de igualdad y las restricciones de desigualdad activas (condiciones de KKT). \textbf{No aplica} a este problema por ser optimización sin restricciones.
+\end{enumerate}
+
+\textbf{En este informe se utiliza correctamente ``puntos estacionarios'' para referirse a los 9 puntos donde $\nabla f(x,y) = 0$.}
+
+\subsection{Lecciones Aprendidas de los Experimentos}
+
+\subsubsection{Sobre la Robustez de los Algoritmos}
+
+\textbf{Gradient Descent NO es robusto} para puntos iniciales arbitrarios en $[-100, 100]$:
+\begin{itemize}
+    \item \textbf{50\% tasa de fallo} (5 de 10 experimentos divergieron)
+    \item Falló en TODOS los puntos con $|x| \geq 50$ o $|y| \geq 50$
+    \item Requiere learning rate adaptativo (no opcional, \textbf{necesario})
+    \item \textbf{Inaceptable para uso en producción} sin modificaciones
+\end{itemize}
+
+\textbf{BFGS ES completamente robusto} para todo el rango probado:
+\begin{itemize}
+    \item \textbf{100\% tasa de éxito} (10 de 10 experimentos convergieron)
+    \item Auto-ajuste del tamaño de paso mediante búsqueda de línea
+    \item Consistentemente eficiente independiente de la posición inicial
+    \item \textbf{Recomendado para uso en producción}
+\end{itemize}
+
+\subsubsection{Sobre el Learning Rate en Gradient Descent}
+
+Los experimentos revelaron la importancia \textbf{crítica y catastrófica} del learning rate.
+
+\textbf{Recomendaciones obligatorias para GD}:
+\begin{enumerate}
+    \item \textbf{Learning rate inversamente proporcional a la distancia}:
+    \begin{equation}
+        \alpha(x) = \frac{\alpha_0}{1 + \|x\|^2} \quad \text{donde } \alpha_0 \approx 0.1
+    \end{equation}
+    
+    \item \textbf{Normalización del gradiente} (Gradient clipping):
+    \begin{equation}
+        \Delta x = -\alpha \frac{\nabla f}{\max(1, \|\nabla f\|/M)} \quad \text{donde } M = 1000
+    \end{equation}
+    
+    \item \textbf{Búsqueda de línea} (como BFGS): Encontrar $\alpha$ que satisfaga condiciones de Wolfe
+\end{enumerate}
+
+\textbf{Sin estas modificaciones, GD es inutilizable para este problema.}
+
+\subsubsection{Recomendación Final Basada en Evidencia}
+
+Para minimizar $f(x,y) = (x^2-1)^2 + (y^2-2)^2$ con puntos iniciales en $[-100, 100]$:
+
+\begin{table}[H]
+\centering
+\caption{Comparación Final de Métodos}
+\begin{tabular}{@{}lcc@{}}
+\toprule
+\textbf{Aspecto} & \textbf{Gradient Descent} & \textbf{BFGS} \\
+\midrule
+Tasa de éxito & 50\% (5/10) & 100\% (10/10) \\
+Iteraciones (éxito) & 54 promedio & 24 promedio \\
+Precisión & $10^{-14}$ & $10^{-19}$ \\
+Robustez & Muy baja & Total \\
+Implementación & Más simple & Más compleja \\
+Necesita tuning & Sí (crítico) & No \\
+Rango funcional & $|x|,|y| < 50$ & Todo $[-100,100]$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Veredicto}: BFGS superior en 6 de 7 aspectos. La simplicidad de GD no compensa sus fallos masivos.
+
+\vspace{0.5cm}
+
+\fbox{\parbox{\textwidth}{
+\textbf{CONCLUSIÓN FINAL:}
+
+\vspace{0.3cm}
+
+\large{\textbf{$\checkmark$ USAR EXCLUSIVAMENTE: BFGS}} (método cuasi-Newton)
+\begin{itemize}
+    \item \textbf{100\% de éxito} en 10 experimentos diversos
+    \item 2× más rápido en iteraciones que GD (cuando GD funciona)
+    \item 1000× mejor precisión ($10^{-19}$ vs $10^{-14}$)
+    \item Robusto para todo el rango probado
+    \item No requiere ajuste de hiperparámetros
+\end{itemize}
+
+\vspace{0.3cm}
+
+\large{\textbf{$\times$ NO USAR: Gradient Descent simple con learning rate fijo}}
+\begin{itemize}
+    \item \textbf{50\% tasa de fallo} (inaceptable)
+    \item Falla en todos los puntos con $|x| \geq 50$ o $|y| \geq 75$
+    \item Divergencia catastrófica por overflow
+    \item Requiere modificaciones obligatorias
+\end{itemize}
+}}
+
+\newpage
+
+% ============================================================================
+% SECCIÓN 14: REFERENCIAS DE LIBRERÍAS Y DOCUMENTACIÓN
+% ============================================================================
+\section{Referencias de Librerías y Documentación}
+
+\subsection{Librerías Utilizadas}
+
+Este proyecto utilizó las siguientes librerías de Python para la implementación de algoritmos de optimización y análisis de resultados:
+
+\subsubsection{NumPy (Numerical Python)}
+
+\textbf{Versión utilizada}: 1.24.0 o superior
+
+\textbf{Propósito}: Biblioteca fundamental para computación científica en Python, utilizada para:
+\begin{itemize}
+    \item Manejo de arrays y matrices multidimensionales
+    \item Operaciones algebraicas vectorizadas
+    \item Cálculo de normas vectoriales (\texttt{np.linalg.norm})
+    \item Funciones matemáticas (exponenciales, trigonométricas, raíces)
+    \item Generación de mallas de puntos para visualización
+\end{itemize}
+
+\textbf{Funcionalidades específicas usadas}:
+\begin{itemize}
+    \item \texttt{np.array()}: Creación de vectores y matrices
+    \item \texttt{np.linalg.norm()}: Cálculo de norma euclidiana del gradiente
+    \item \texttt{np.linalg.eigvals()}: Cálculo de valores propios de la Hessiana
+    \item \texttt{np.sqrt()}: Cálculo de raíces cuadradas
+    \item \texttt{np.linspace()}, \texttt{np.meshgrid()}: Generación de mallas para visualización
+    \item \texttt{np.argmin()}, \texttt{np.mean()}, \texttt{np.median()}: Estadísticas
+    \item \texttt{np.isnan()}: Detección de valores NaN (divergencia)
+\end{itemize}
+
+\textbf{Documentación oficial}: \url{https://numpy.org/doc/stable/}
+
+\textbf{Referencia bibliográfica}:
+\begin{quote}
+Harris, C.R., Millman, K.J., van der Walt, S.J. et al. (2020). Array programming with NumPy. \textit{Nature}, 585, 357–362. DOI: 10.1038/s41586-020-2649-2
+\end{quote}
+
+\subsubsection{SciPy (Scientific Python)}
+
+\textbf{Versión utilizada}: 1.10.0 o superior
+
+\textbf{Propósito}: Biblioteca para computación científica y técnica, construida sobre NumPy.
+
+\textbf{Módulo específico usado}: \texttt{scipy.optimize}
+
+\textbf{Funcionalidades usadas}:
+\begin{itemize}
+    \item \texttt{scipy.optimize.minimize()}: Función de optimización de propósito general
+    \begin{itemize}
+        \item \texttt{method='BFGS'}: Algoritmo cuasi-Newton BFGS
+        \item \texttt{jac=grad\_f}: Gradiente analítico
+        \item \texttt{tol}: Tolerancia para convergencia
+        \item \texttt{options=\{'maxiter': max\_iter\}}: Número máximo de iteraciones
+        \item \texttt{callback}: Función para registrar trayectoria
+    \end{itemize}
+\end{itemize}
+
+\textbf{Algoritmo BFGS implementado en SciPy}:
+Sigue el esquema de Nocedal \& Wright (2006), con:
+\begin{itemize}
+    \item Búsqueda de línea que satisface las condiciones de Wolfe
+    \item Manejo numérico estable de la actualización BFGS
+    \item Reinicio automático si la aproximación de la Hessiana pierde definitud positiva
+\end{itemize}
+
+\textbf{Documentación oficial}: \url{https://docs.scipy.org/doc/scipy/reference/optimize.html}
+
+\textbf{Referencia bibliográfica}:
+\begin{quote}
+Virtanen, P., Gommers, R., Oliphant, T.E. et al. (2020). SciPy 1.0: fundamental algorithms for scientific computing in Python. \textit{Nature Methods}, 17, 261–272. DOI: 10.1038/s41592-019-0686-2
+\end{quote}
+
+\subsubsection{Matplotlib}
+
+\textbf{Versión utilizada}: 3.7.0 o superior
+
+\textbf{Propósito}: Biblioteca para creación de visualizaciones estáticas, animadas e interactivas.
+
+\textbf{Módulos usados}:
+\begin{itemize}
+    \item \texttt{matplotlib.pyplot}: Interfaz tipo MATLAB para gráficos
+    \item \texttt{mpl\_toolkits.mplot3d.Axes3D}: Gráficos tridimensionales
+\end{itemize}
+
+\textbf{Funcionalidades usadas}:
+\begin{itemize}
+    \item \texttt{plt.subplots()}: Creación de figuras con múltiples subgráficos
+    \item \texttt{ax.contour()}: Gráficos de curvas de nivel
+    \item \texttt{ax.plot()}: Trayectorias de optimización
+    \item \texttt{ax.plot\_surface()}: Superficie 3D de la función
+    \item \texttt{ax.scatter()}: Marcado de puntos estacionarios
+    \item Configuración de ejes, títulos, leyendas y rejillas
+\end{itemize}
+
+\textbf{Documentación oficial}: \url{https://matplotlib.org/stable/contents.html}
+
+\textbf{Referencia bibliográfica}:
+\begin{quote}
+Hunter, J.D. (2007). Matplotlib: A 2D graphics environment. \textit{Computing in Science \& Engineering}, 9(3), 90-95. DOI: 10.1109/MCSE.2007.55
+\end{quote}
+
+\subsubsection{Otras Librerías Estándar de Python}
+
+\begin{itemize}
+    \item \textbf{time}: Medición de tiempo de ejecución (\texttt{time.time()})
+    \item \textbf{json}: Serialización y deserialización de datos (\texttt{json.load()}, \texttt{json.dump()})
+    \item \textbf{pathlib}: Manejo de rutas de archivos (\texttt{Path()}, \texttt{Path.mkdir()}, \texttt{Path.glob()})
+\end{itemize}
+
+\subsection{Referencias Teóricas de los Algoritmos}
+
+\subsubsection{Método BFGS (Broyden-Fletcher-Goldfarb-Shanno)}
+
+\textbf{Referencia principal}:
+\begin{quote}
+Nocedal, J., \& Wright, S. J. (2006). \textit{Numerical Optimization} (2nd ed.). Springer Series in Operations Research. ISBN: 978-0-387-30303-1
+\end{quote}
+
+\textbf{Capítulos relevantes}:
+\begin{itemize}
+    \item Capítulo 6: Quasi-Newton Methods
+    \item Capítulo 3: Line Search Methods
+    \item Sección 6.1: The BFGS Method
+\end{itemize}
+
+\textbf{Artículos originales}:
+\begin{itemize}
+    \item Broyden, C.G. (1970). "The convergence of a class of double-rank minimization algorithms". \textit{IMA Journal of Applied Mathematics}, 6(1), 76-90.
+    \item Fletcher, R. (1970). "A new approach to variable metric algorithms". \textit{The Computer Journal}, 13(3), 317-322.
+    \item Goldfarb, D. (1970). "A family of variable-metric methods derived by variational means". \textit{Mathematics of Computation}, 24(109), 23-26.
+    \item Shanno, D.F. (1970). "Conditioning of quasi-Newton methods for function minimization". \textit{Mathematics of Computation}, 24(111), 647-656.
+\end{itemize}
+
+\subsubsection{Método del Descenso del Gradiente}
+
+\textbf{Referencia principal}:
+\begin{quote}
+Boyd, S., \& Vandenberghe, L. (2004). \textit{Convex Optimization}. Cambridge University Press. ISBN: 978-0-521-83378-3
+\end{quote}
+
+\textbf{Capítulos relevantes}:
+\begin{itemize}
+    \item Capítulo 9: Unconstrained minimization
+    \item Sección 9.3: Gradient descent method
+\end{itemize}
+
+\textbf{Referencia clásica}:
+\begin{quote}
+Cauchy, A. (1847). "Méthode générale pour la résolution des systèmes d'équations simultanées". \textit{Comptes Rendus de l'Académie des Sciences}, 25, 536-538.
+\end{quote}
+
+\subsection{Implementación y Código Fuente}
+
+\textbf{Repositorio del proyecto}: \url{https://github.com/Rlianny/Optimization_Models_Project_2025-}
+
+\textbf{Archivos principales}:
+\begin{itemize}
+    \item \texttt{Implementation/Methods\_Implementation.ipynb}: Notebook Jupyter con implementación completa
+    \item \texttt{Implementation/Experiments/exp*.json}: Configuraciones de experimentos
+    \item \texttt{Implementation/Results/results\_*.json}: Resultados de las ejecuciones
+\end{itemize}
+
+\textbf{Lenguaje de programación}: Python 3.7+
+
+\textbf{Entorno de desarrollo}: Jupyter Notebook / VS Code
+
+\subsection{Recursos Adicionales}
+
+\textbf{Tutoriales y documentación de SciPy Optimize}:
+\begin{itemize}
+    \item SciPy Lecture Notes - Optimization: \url{https://scipy-lectures.org/advanced/mathematical_optimization/}
+    \item SciPy Optimize Tutorial: \url{https://docs.scipy.org/doc/scipy/tutorial/optimize.html}
+\end{itemize}
+
+\textbf{Recursos sobre métodos cuasi-Newton}:
+\begin{itemize}
+    \item Wright, S.J., \& Nocedal, J. (1999). "Numerical Optimization". Springer. (Texto fundamental)
+    \item Optimization Methods - Stanford University: \url{https://web.stanford.edu/class/ee364a/} (Curso de Stephen Boyd)
+\end{itemize}
+
+\subsection{Licencias}
+
+\begin{itemize}
+    \item \textbf{NumPy}: BSD License
+    \item \textbf{SciPy}: BSD License
+    \item \textbf{Matplotlib}: PSF License (compatible con BSD)
+    \item \textbf{Python}: PSF License
+\end{itemize}
+
+Todas las librerías utilizadas son de código abierto y permiten uso académico y comercial sin restricciones significativas.
+
+\vspace{1cm}
+
+\noindent\rule{\textwidth}{0.4pt}
+
+\textbf{Nota final sobre reproducibilidad}: Todos los experimentos pueden ser reproducidos ejecutando el notebook \texttt{Methods\_Implementation.ipynb} con los archivos de configuración proporcionados en la carpeta \texttt{Experiments/}. Los resultados están almacenados en formato JSON para máxima portabilidad y legibilidad.
+
+\end{document}
