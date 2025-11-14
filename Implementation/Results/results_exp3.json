@@ -20022,7 +20022,7 @@
           NaN
         ]
       ],
-      "execution_time": 0.05583667755126953
+      "execution_time": 0.03616809844970703
     },
     "bfgs": {
       "x_opt": [
@@ -20201,7 +20201,7 @@
           1.4142135614697149
         ]
       ],
-      "execution_time": 0.005446910858154297
+      "execution_time": 0.004945278167724609
     },
     "theoretical_minimum": {
       "x": [
