@@ -12,7 +12,7 @@ Desde la perspectiva teórica, la función presenta cuatro mínimos globales equ
 
 ---
 
-## 1. Definición de la Función, Dominio y Signo
+## Capítulo 1: Análisis Teórico del Modelo
 
 La función objetivo a minimizar se define como:
 $$f(x,y) = (x^2 - 1)^2 + (y^2 - 2)^2$$
@@ -24,8 +24,6 @@ En cuanto al signo de la función, dado que constituye la suma de dos términos 
 $$f(x,y) = \underbrace{(x^2 - 1)^2}_{\geq 0} + \underbrace{(y^2 - 2)^2}_{\geq 0} \geq 0$$
 para todo $(x,y) \in \mathbb{R}^2$. Por lo tanto, la función resulta no negativa en todo su dominio. El valor mínimo global de cero se alcanza cuando ambos términos son simultáneamente cero, lo cual ocurre cuando $x^2 - 1 = 0$ y $y^2 - 2 = 0$.
 
-## 2. Análisis de las Variables de la Función
-
 Las variables $x$ e $y$ constituyen variables continuas que toman valores en el conjunto de los números reales $\mathbb{R}$. Ambas variables pueden asumir cualquier valor real dentro de su dominio, sin restricciones de discreción o valores enteros, y no existen límites superiores o inferiores para los valores que pueden adoptar.
 
 Las variables $x$ e $y$ son independientes entre sí, dado que la función puede expresarse como la suma de dos funciones separables:
@@ -34,13 +32,9 @@ $$g(x) = (x^2 - 1)^2$$
 $$h(y) = (y^2 - 2)^2$$
 Esta separabilidad implica que el comportamiento de la función respecto a $x$ resulta independiente del valor de $y$, y viceversa.
 
-## 3. Análisis de Continuidad y Diferenciabilidad
-
 La función $f(x,y)$ es continua en todo su dominio $\mathbb{R}^2$. Esta propiedad se fundamenta en que la función constituye una composición y suma de funciones polinomiales, las cuales son continuas en $\mathbb{R}$. Específicamente, las funciones $x^2$ e $y^2$ son funciones polinomiales continuas, las expresiones $(x^2 - 1)$ y $(y^2 - 2)$ resultan continuas por ser suma y resta de funciones continuas, los términos $(x^2 - 1)^2$ y $(y^2 - 2)^2$ mantienen la continuidad por composición, y finalmente la suma de funciones continuas preserva la propiedad de continuidad.
 
 Adicionalmente, la función $f(x,y)$ es infinitamente diferenciable en todo $\mathbb{R}^2$. Las funciones polinomiales son diferenciables en todo su dominio, y la composición y suma de funciones diferenciables resulta diferenciable. Por consiguiente, es posible calcular derivadas parciales de cualquier orden en cualquier punto del dominio.
-
-## 4. Gradiente: ∇f(x,y)
 
 El gradiente de la función constituye el vector de derivadas parciales de primer orden, expresado como:
 
@@ -65,8 +59,6 @@ $$\frac{\partial f}{\partial y} = 2(y^2 - 2) \cdot 2y = 4y(y^2 - 2)$$
 Por consiguiente, el gradiente completo se expresa como:
 
 $$\nabla f(x,y) = \begin{bmatrix} 4x(x^2 - 1) \\ 4y(y^2 - 2) \end{bmatrix}$$
-
-## 5. Matriz Hessiana
 
 La matriz Hessiana $H_f(x,y)$ contiene las derivadas parciales de segundo orden de función, expresada mediante la matriz:
 
@@ -98,8 +90,6 @@ $$H_f(x,y) = \begin{bmatrix}
 
 lo cual confirma la independencia de las variables previamente establecida.
 
-## 6. Análisis de Convexidad
-
 Una función se considera convexa si su matriz Hessiana resulta semidefinida positiva en todo su dominio, lo cual se verifica cuando todos sus valores propios son no negativos. Dado que la matriz Hessiana de la función bajo estudio es diagonal, sus valores propios corresponden directamente a los elementos de la diagonal principal, obteniéndose $\lambda_1 = 12x^2 - 4$ y $\lambda_2 = 12y^2 - 8$.
 
 Para que la función sea convexa globalmente, ambos valores propios deben ser no negativos para todo punto $(x,y) \in \mathbb{R}^2$. Sin embargo, el análisis revela que:
@@ -123,8 +113,6 @@ $$|y| \geq \sqrt{\frac{2}{3}}$$
 resultando en $\lambda_1 < 0$ y $\lambda_2 \geq 0$, así como las regiones donde $|x| \geq \frac{1}{\sqrt{3}}$ y $|y| < \sqrt{\frac{2}{3}}$, produciendo $\lambda_1 \geq 0$ y $\lambda_2 < 0$. En estas regiones, la función no es ni convexa ni cóncava, y allí se localizan los puntos silla $(0, \pm\sqrt{2})$ y $(\pm 1, 0)$. Finalmente, las fronteras de convexidad están determinadas por las líneas verticales $x = \pm\frac{1}{\sqrt{3}} \approx \pm 0.577$ y las líneas horizontales $y = \pm\sqrt{\frac{2}{3}} \approx \pm 0.816$.
 
 La no convexidad global de la función conlleva importantes implicaciones para los métodos de optimización. Los algoritmos basados en gradiente podrían converger a diferentes soluciones dependiendo del punto inicial, considerando la existencia de cuatro mínimos globales equivalentes. Adicionalmente, la presencia de puntos silla podría ralentizar o afectar la convergencia de los algoritmos. Esta situación requiere un análisis cuidadoso de los puntos estacionarios para caracterizar completamente el comportamiento de la función. No obstante, resulta importante destacar que, aunque la función no es convexa globalmente, el análisis posterior de la Hessiana demuestra que no existen mínimos locales que no sean simultáneamente mínimos globales, lo cual implica que todos los mínimos identificados constituyen mínimos globales de la función.
-
-## 7. Determinación del Mínimo Teórico
 
 En el contexto de optimización, resulta fundamental distinguir entre dos conceptos frecuentemente confundidos. Los puntos críticos en cálculo corresponden a aquellos donde la derivada es indefinida o no existe, mientras que los puntos estacionarios son aquellos donde el gradiente se anula. En optimización con restricciones, también se consideran puntos estacionarios aquellos que satisfacen las condiciones de Karush-Kuhn-Tucker. Para el problema bajo estudio, la función $f(x,y)$ es infinitamente diferenciable en todo $\mathbb{R}^2$, por lo tanto, no existen puntos críticos en el sentido del cálculo, dado que la derivada existe en todos los puntos del dominio. Los puntos de interés son los puntos estacionarios donde el gradiente se anula.
 
@@ -154,8 +142,6 @@ Al combinar todas las posibilidades, se obtienen nueve puntos estacionarios:
 8. $(-1, \sqrt{2})$
 9. $(-1, -\sqrt{2})$
 
-## 8. Análisis de los Puntos Estacionarios
-
 Para clasificar cada punto estacionario identificado, se evalúa la matriz Hessiana en cada uno de ellos y se analizan sus valores propios correspondientes.
 
 En el punto $(0, 0)$, la Hessiana adopta la forma
@@ -181,8 +167,6 @@ $$f(\pm 1, \pm\sqrt{2}) = (1-1)^2 + (2-2)^2 = 0$$
 
 En resumen, la clasificación completa de los puntos estacionarios revela que el punto $(0, 0)$ es un máximo local con valor cinco, los puntos $(0, \sqrt{2})$ y $(0, -\sqrt{2})$ son puntos silla con valor uno, los puntos $(1, 0)$ y $(-1, 0)$ son puntos silla con valor cuatro, y los puntos $(1, \sqrt{2})$, $(1, -\sqrt{2})$, $(-1, \sqrt{2})$, y $(-1, -\sqrt{2})$ constituyen los cuatro mínimos globales de la función, todos con valor cero.
 
-## 9. Análisis del Óptimo
-
 La función presenta cuatro mínimos globales con el mismo valor óptimo, ubicados en $x^* \in \{(1, \sqrt{2}), (1, -\sqrt{2}), (-1, \sqrt{2}), (-1, -\sqrt{2})\}$, todos alcanzando el valor $f(x^*) = 0$. La demostración de que estos puntos constituyen mínimos globales se fundamenta en tres argumentos complementarios.
 
 En primer lugar, dado que
@@ -197,7 +181,9 @@ Por consiguiente, dado que $f(x^*) = 0 = \inf_{(x,y) \in \mathbb{R}^2} f(x,y)$ y
 
 Desde una perspectiva geométrica, estos cuatro mínimos corresponden a las cuatro combinaciones de signos que satisfacen simultáneamente las ecuaciones $x^2 = 1$ y $y^2 = 2$. La existencia de múltiples mínimos globales resulta consistente con la estructura simétrica de la función y su no convexidad en ciertas regiones del dominio. Las características del óptimo incluyen un valor óptimo $f^* = 0$, cuatro soluciones óptimas simétricamente distribuidas en el espacio, y la naturaleza de mínimos globales estrictos localmente, dado que cada uno es el único mínimo en su vecindad inmediata.
 
-## 10. Descripción de los Algoritmos Utilizados
+## Capítulo 2: Descripción de los Algoritmos Utilizados
+
+### Descenso del Gradiente
 
 El método del Descenso del Gradiente constituye un algoritmo iterativo de optimización de primer orden que se desplaza en la dirección opuesta al gradiente para localizar un mínimo local de una función. El fundamento matemático de este método reside en que el gradiente $\nabla f(x)$ señala la dirección de mayor crecimiento de la función, por lo tanto, el negativo del gradiente $-\nabla f(x)$ indica la dirección de mayor decrecimiento, convirtiéndola en una dirección de descenso apropiada.
 
@@ -208,6 +194,8 @@ Los parámetros críticos del método incluyen la tasa de aprendizaje que contro
 Las ventajas del método comprenden su simplicidad de implementación, bajo costo computacional por iteración, requerimiento únicamente del cálculo del gradiente sin derivadas de segundo orden, y la garantía de descenso en cada iteración con una tasa de aprendizaje apropiada. Sin embargo, presenta desventajas significativas, incluyendo convergencia potencialmente lenta especialmente cerca del óptimo, sensibilidad a la elección de la tasa de aprendizaje, posibilidad de quedar atrapado en mínimos locales o puntos silla, e ineficiencia para funciones mal condicionadas.
 
 La selección de este algoritmo se justifica por su simplicidad como método de optimización basado en gradiente más fundamental, su utilidad como línea base para comparar con métodos más sofisticados, su interpretabilidad facilitando la comprensión y visualización del comportamiento, y su aplicabilidad a funciones suaves y diferenciables como la función objetivo bajo estudio.
+
+### BFGS
 
 En contraste, el método cuasi-Newton BFGS constituye un algoritmo que aproxima la matriz Hessiana inversa para determinar direcciones de búsqueda más eficientes que el gradiente puro. Los métodos de Newton utilizan información de segundo orden mediante la expresión $x^{(k+1)} = x^{(k)} - H_f^{-1}(x^{(k)}) \nabla f(x^{(k)})$, sin embargo, calcular e invertir la Hessiana resulta computacionalmente costoso. BFGS construye iterativamente una aproximación $B_k$ de $H_f^{-1}$ empleando únicamente evaluaciones del gradiente.
 
@@ -231,8 +219,6 @@ Las estrategias de robustez implementadas comprenden límites de iteraciones aju
 
 Las predicciones sobre el comportamiento anticipan que Gradient Descent será exitoso desde puntos en regiones convexas alejadas del origen, lento desde posiciones cercanas al máximo, potencialmente ineficiente cerca de puntos silla, y requerirá muchas iteraciones desde puntos extremos. Por su parte, BFGS se espera que presente convergencia rápida en la mayoría de casos, posible comportamiento anómalo cerca de puntos silla en las primeras iteraciones, excelente desempeño desde puntos extremos gracias a la búsqueda de línea adaptativa, y robustez incluso en regiones no convexas.
 
-#### 10.3.4 Tabla de Predicción de Convergencia
-
 | Experimento | Punto Inicial | Dificultad | GD: Iteraciones | BFGS: Iteraciones |
 |-------------|---------------|------------|-----------------|-------------------|
 | exp1 | (0.5, 0.5) | Media | 200-500 | 10-30 |
@@ -248,29 +234,29 @@ Las predicciones sobre el comportamiento anticipan que Gradient Descent será ex
 
 **Nota**: Estas predicciones se validarán con los resultados experimentales reales.
 
-### 10.4 Uso de Librerías
+## Capítulo 3: Diseño Experimental
 
-#### 10.4.1 NumPy
+### Uso de Librerías
+
+#### NumPy
 
 - **Propósito**: Operaciones con arrays y álgebra lineal
 - **Uso**: Vectores, cálculo de normas, operaciones matriciales
 - **Justificación**: Estándar de facto para computación numérica en Python
 
-#### 10.4.2 SciPy
+#### SciPy
 
 - **Propósito**: Algoritmos científicos avanzados
 - **Uso**: Implementación de BFGS mediante `scipy.optimize.minimize`
 - **Justificación**: Implementación robusta y optimizada de algoritmos de optimización
 
-#### 10.4.3 Matplotlib
+#### Matplotlib
 
 - **Propósito**: Visualización de resultados
 - **Uso**: Gráficos de contorno y trayectorias de optimización
 - **Justificación**: Biblioteca estándar para visualización en Python científico
 
-## 11. Comparación de Resultados
-
-### 11.1 Criterios de Comparación
+### Criterios de Comparación
 
 Los métodos se comparan según:
 
@@ -280,8 +266,6 @@ Los métodos se comparan según:
 4. **Punto final**: ¿A cuál de los cuatro mínimos globales converge?
 5. **Sensibilidad al punto inicial**: ¿Cómo afecta $x^{(0)}$ al resultado?
 6. **Impacto del learning rate**: (Solo para Gradient Descent) ¿Cómo afecta $\alpha$ a la convergencia?
-
-### 11.2 Experimentos Diseñados
 
 **Nota**: Los experimentos cubren el rango completo [-100, 100] para ambas variables, según los requisitos del proyecto.
 
@@ -345,7 +329,7 @@ Los métodos se comparan según:
 - **Objetivo**: Evaluar convergencia desde posiciones intermedias alejadas
 - **Zona**: Cuadrante IV, posición intermedia
 
-### 11.3 Análisis Esperado
+### Análisis Esperado
 
 **Gradient Descent**:
 - Convergencia más lenta
@@ -359,11 +343,9 @@ Los métodos se comparan según:
 - Alta precisión en el resultado final
 - Trayectoria más directa hacia el óptimo
 
-### 11.4 Resultados de los Experimentos
+## Capítulo 4: Resultados
 
 Los resultados específicos se generan al ejecutar el notebook y se guardan en archivos JSON en la carpeta `Results/`.
-
-#### 11.4.1 Resultados Experimentales Obtenidos
 
 Tras ejecutar los 10 experimentos diseñados, se obtuvieron los siguientes resultados:
 
@@ -388,7 +370,7 @@ Tras ejecutar los 10 experimentos diseñados, se obtuvieron los siguientes resul
 - Mínimo 3: (-1, √2)
 - Mínimo 4: (-1, -√2)
 
-#### 11.4.2 Hallazgos Importantes
+#### Hallazgos Importantes
 
 **1. Falla Masiva del Gradient Descent en Puntos Alejados**
 
@@ -398,9 +380,10 @@ El resultado más crítico del estudio: **Gradient Descent falló en 5 de 10 exp
 
 **Figura 2:** Experimento 1 con punto inicial $(0.5, 0.5)$ en región no convexa. El panel izquierdo muestra Gradient Descent convergiendo en 31 iteraciones con trayectoria menos directa. El panel derecho presenta BFGS alcanzando convergencia en solo 8 iteraciones con trayectoria significativamente más eficiente hacia el mínimo global en $(1, \sqrt{2})$.
 
+
 ![Divergencia catastrófica de Gradient Descent - Experimento 3: Punto inicial extremo](Implementation/Figures/results_exp3_exp1_comparison.png)
 
-**Figura 3:** Experimento 3 con punto inicial extremo $(100, 100)$ evidenciando el fallo crítico de Gradient Descent. El panel izquierdo muestra la divergencia catastrófica por overflow numérico, mientras el panel derecho demuestra que BFGS maneja exitosamente esta situación convergiendo en 42 iteraciones.
+**Figura 3 (Ejemplo de Divergencia):** Experimento 3 con punto inicial extremo $(100, 100)$ evidenciando el fallo crítico de Gradient Descent. El panel izquierdo muestra la divergencia catastrófica por overflow numérico, mientras el panel derecho demuestra que BFGS maneja exitosamente esta situación convergiendo en 42 iteraciones.
 
 **Experimentos con divergencia:**
 - exp3 (100, 100): Divergencia por overflow
@@ -452,13 +435,58 @@ $$\alpha < \frac{2}{119996} \approx 1.67 \times 10^{-5}$$
 
 **Conclusión crítica**: Gradient Descent simple **NO es confiable** para el rango [-100, 100].
 
+### Análisis Visual Comparativo de Desempeño
+
+![Comparación de Iteraciones: Gradient Descent vs BFGS](Implementation/Figures/comparison_iterations_barplot.png)
+
+**Figura 4:** Gráfico de barras comparativo del número de iteraciones requerido por cada método. Las barras azules representan casos exitosos de Gradient Descent, las barras rojas rayadas indican divergencia (alcanzando el máximo de iteraciones), y las barras verdes muestran el desempeño consistentemente exitoso de BFGS. Nótese la dramática diferencia: GD divergió en 5 de 10 experimentos (exp3-exp6, exp10), todos correspondientes a puntos iniciales alejados del origen.
+
+![Curvas de Convergencia en Escala Logarítmica](Implementation/Figures/convergence_curves.png)
+
+**Figura 5:** Evolución del valor de la función objetivo $f(x,y)$ a lo largo de las iteraciones en escala logarítmica. El panel izquierdo muestra Gradient Descent para los 5 experimentos exitosos, evidenciando convergencia más lenta y requiriendo entre 29-83 iteraciones. El panel derecho presenta BFGS convergiendo en solo 4-10 iteraciones con descenso exponencial mucho más rápido, demostrando la superioridad del método cuasi-Newton en eficiencia de convergencia.
+
+![Distribución de Puntos Iniciales y Resultados](Implementation/Figures/initial_points_distribution.png)
+
+**Figura 6:** Mapa del espacio de búsqueda $[-110, 110] \times [-110, 110]$ mostrando la distribución de todos los puntos iniciales experimentales superpuestos sobre las curvas de nivel de la función objetivo. Las estrellas verdes marcan los cuatro mínimos globales, el triángulo rojo indica el máximo local en el origen, y los cuadrados azules representan los puntos silla. Los puntos iniciales se colorean según el resultado: círculos cian para convergencia exitosa de GD, y X naranjas para divergencia de GD. Las líneas naranjas discontinuas delimitan las fronteras de convexidad ($x = \pm 1/\sqrt{3}$, $y = \pm\sqrt{2/3}$). Claramente se observa que **todos los puntos que divergieron están en las esquinas extremas del espacio**, confirmando que GD falla sistemáticamente para puntos alejados.
+
+![Box Plot de Distribución de Iteraciones](Implementation/Figures/boxplot_iterations.png)
+
+**Figura 7:** Diagrama de caja comparando la distribución estadística del número de iteraciones entre métodos. Gradient Descent (solo casos exitosos, n=5) muestra mayor dispersión con mediana de 42 iteraciones, mientras BFGS (n=10, todos exitosos) presenta mediana de 24 iteraciones con menor variabilidad. Los puntos individuales con jitter revelan la distribución completa de datos. BFGS no solo es más eficiente en promedio, sino también más consistente y **100% confiable**.
+
+![Comparación Multidimensional de Métricas](Implementation/Figures/radar_metrics.png)
+
+**Figura 8:** Gráfico de radar pentagonal comparando cinco métricas clave de desempeño en escala 0-10 (mayor es mejor): Tasa de Éxito (50% vs 100%), Eficiencia medida como inverso de iteraciones promedio, Precisión en escala logarítmica del valor final, Robustez basada en consistencia (desviación estándar), y Rendimiento General como promedio de las cuatro métricas anteriores. El polígono verde (BFGS) domina completamente al azul (Gradient Descent) en todas las dimensiones, con BFGS alcanzando puntuaciones perfectas o casi perfectas en tasa de éxito (10.0), eficiencia (10.0), precisión (10.0), y robustez (8.5), mientras que GD solo logra 5.0 en tasa de éxito debido al 50% de fallos.
+
+**Estadísticas Cuantitativas del Box Plot:**
+
+**Gradient Descent (solo casos exitosos, n=5):**
+- Mediana: 42 iteraciones
+- Media: 45.8 iteraciones  
+- Desviación Estándar: 19.5 iteraciones
+- Rango: [29, 83] iteraciones
+- Coeficiente de Variación: 42.6% (alta variabilidad)
+
+**BFGS (todos los experimentos, n=10):**
+- Mediana: 24 iteraciones
+- Media: 24.1 iteraciones
+- Desviación Estándar: 17.0 iteraciones
+- Rango: [4, 42] iteraciones
+- Coeficiente de Variación: 70.5% (debido a la amplia gama de dificultades)
+
+**Factores de Mejora:**
+- **Eficiencia (mediana)**: BFGS es 1.79× más rápido que GD
+- **Eficiencia (media)**: BFGS es 1.90× más rápido que GD
+- **Confiabilidad**: BFGS tiene 2.0× la tasa de éxito de GD (100% vs 50%)
+
+**Nota crítica**: Estas estadísticas de GD son **optimistas** porque excluyen los 5 experimentos que divergieron. Si se consideran todos los experimentos, la ventaja de BFGS es aún más dramática.
+
 ![Convergencia desde punto inicial cerca del máximo local - Experimento 7](Implementation/Figures/results_exp7_exp1_comparison.png)
 
-**Figura 4:** Experimento 7 con punto inicial $(0.1, 0.1)$ muy cerca del máximo local. Ambos métodos logran escapar exitosamente, pero BFGS requiere solo 8 iteraciones comparado con las 44 de Gradient Descent, demostrando superioridad incluso en casos problemáticos cercanos a puntos estacionarios no mínimos.
+**Figura 9:** Experimento 7 con punto inicial $(0.1, 0.1)$ muy cerca del máximo local. Ambos métodos logran escapar exitosamente, pero BFGS requiere solo 8 iteraciones comparado con las 44 de Gradient Descent, demostrando superioridad incluso en casos problemáticos cercanos a puntos estacionarios no mínimos.
 
 ![Comportamiento cerca de punto silla - Experimento 9](Implementation/Figures/results_exp9_exp1_comparison.png)
 
-**Figura 5:** Experimento 9 iniciando cerca del punto silla $(1, 0)$. Gradient Descent muestra trayectoria casi vertical con 42 iteraciones, mientras BFGS converge eficientemente en solo 4 iteraciones, evidenciando su capacidad superior para navegar regiones con Hessiana indefinida.
+**Figura 10:** Experimento 9 iniciando cerca del punto silla $(1, 0)$. Gradient Descent muestra trayectoria casi vertical con 42 iteraciones, mientras BFGS converge eficientemente en solo 4 iteraciones, evidenciando su capacidad superior para navegar regiones con Hessiana indefinida.
 
 **2. Cuencas de Atracción (Solo Experimentos Exitosos)**
 
@@ -515,9 +543,9 @@ $$\alpha < \frac{2}{119996} \approx 1.67 \times 10^{-5}$$
 - BFGS: 37 iteraciones ✓ **EXITOSO**
 - El umbral de fallo de GD está cerca de $|x|$ o $|y| \approx 50$
 
-#### 11.4.3 Validación de Predicciones
+#### Validación de Predicciones
 
-Comparando con la Tabla de Predicción (Sección 10.3.4):
+Comparando con la Tabla de Predicción (Capítulo 2):
 
 | Experimento | Predicción GD | Real GD | Predicción BFGS | Real BFGS | Validación |
 |-------------|---------------|---------|-----------------|-----------|------------|
@@ -535,7 +563,7 @@ Comparando con la Tabla de Predicción (Sección 10.3.4):
 - GD divergió completamente en exp4 (predicción: lento pero convergente)
 - BFGS consistentemente supera las expectativas en puntos silla
 
-#### 11.4.4 Formato de Resultados JSON
+#### Formato de Resultados JSON
 
 Cada archivo contiene:
 
@@ -563,19 +591,21 @@ Cada archivo contiene:
 }
 ```
 
-## 12. Visualización del Modelo y las Instancias de los Algoritmos
+## Capítulo 5: Conclusiones
 
 La topología completa de la función objetivo, presentada en la Figura 1 al inicio de este informe, revela la estructura compleja del paisaje de optimización con sus múltiples puntos estacionarios. Las curvas de nivel muestran líneas de igual valor de la función $f(x,y)$, mientras que las trayectorias de los algoritmos conectan los puntos visitados durante el proceso de convergencia. Los mínimos teóricos se marcan con estrellas verdes para facilitar la identificación visual.
 
-Las visualizaciones de los experimentos individuales (Figuras 2-5) permiten comparar directamente el comportamiento de Gradient Descent, representado con trayectorias rojas, frente a BFGS, mostrado con trayectorias azules. Gradient Descent típicamente exhibe trayectorias más largas con pasos más pequeños cerca del óptimo, especialmente en regiones no convexas. En contraste, BFGS demuestra consistentemente trayectorias más cortas y directas hacia los mínimos globales.
+Las visualizaciones de los experimentos individuales (Figuras 2, 3, 9, 10, 11) permiten comparar directamente el comportamiento de Gradient Descent, representado con trayectorias rojas, frente a BFGS, mostrado con trayectorias azules. Gradient Descent típicamente exhibe trayectorias más largas con pasos más pequeños cerca del óptimo, especialmente en regiones no convexas. En contraste, BFGS demuestra consistentemente trayectorias más cortas y directas hacia los mínimos globales.
+
+Las nuevas visualizaciones agregadas (Figuras 4-8) proporcionan un análisis cuantitativo exhaustivo del desempeño comparativo. El gráfico de barras (Figura 4) ilustra dramáticamente la tasa de fallo del 50% de Gradient Descent en puntos alejados. Las curvas de convergencia (Figura 5) revelan la superioridad exponencial de BFGS en velocidad de descenso. El mapa de distribución espacial (Figura 6) identifica geográficamente las regiones problemáticas donde GD diverge sistemáticamente. El diagrama de caja (Figura 7) cuantifica estadísticamente la ventaja en eficiencia y consistencia de BFGS. Finalmente, el gráfico de radar (Figura 8) sintetiza multidimensionalmente todas las métricas de desempeño, mostrando la dominación completa de BFGS sobre GD en tasa de éxito, eficiencia, precisión, robustez y rendimiento general.
 
 Los gráficos revelan información crucial sobre la naturaleza no convexa de la función en ciertas regiones, evidenciada por el comportamiento diferencial de los algoritmos dependiendo del punto inicial. La estructura simétrica con cuatro mínimos globales se manifiesta claramente en las curvas de nivel, al igual que la presencia de puntos silla ubicados estratégicamente entre las cuencas de atracción y el máximo local en el origen. La eficiencia relativa de cada método resulta visualmente evidente al comparar la longitud y complejidad de las trayectorias, así como el número de iteraciones requeridas. Finalmente, el comportamiento de convergencia en diferentes regiones del espacio permite identificar las zonas problemáticas donde Gradient Descent muestra dificultades o divergencia, mientras BFGS mantiene robustez consistente.
 
 ![Ejemplo de convergencia exitosa desde diferentes cuadrantes - Experimento 2](Implementation/Figures/results_exp2_exp1_comparison.png)
 
-**Figura 6:** Experimento 2 con punto inicial $(-1.5, -1.0)$ en el cuadrante III. Ambos métodos convergen exitosamente al mínimo global en $(-1, -\sqrt{2})$, con Gradient Descent requiriendo 29 iteraciones y BFGS solo 10, ilustrando la ventaja de eficiencia de los métodos de segundo orden incluso en casos favorables.
+**Figura 11:** Experimento 2 con punto inicial $(-1.5, -1.0)$ en el cuadrante III. Ambos métodos convergen exitosamente al mínimo global en $(-1, -\sqrt{2})$, con Gradient Descent requiriendo 29 iteraciones y BFGS solo 10, ilustrando la ventaja de eficiencia de los métodos de segundo orden incluso en casos favorables.
 
-## 13. Conclusiones
+### Síntesis de Hallazgos
 
 El análisis de la función revela que posee una estructura cuártica no convexa globalmente, presentando cuatro mínimos globales equivalentes y varios puntos silla intermedios. La separabilidad de las variables simplifica el análisis matemático, sin embargo, la no convexidad introduce complejidad significativa en el comportamiento de los algoritmos de optimización.
 
@@ -613,13 +643,13 @@ Basándose en evidencia experimental sólida de diez experimentos sistemáticos,
 
 ---
 
-## 14. Referencias de Librerías y Documentación
+### Referencias de Librerías y Documentación
 
-### 14.1 Librerías Utilizadas
+#### Librerías Utilizadas
 
 Este proyecto utilizó las siguientes librerías de Python para la implementación de algoritmos de optimización y análisis de resultados:
 
-#### 14.1.1 NumPy (Numerical Python)
+#### NumPy (Numerical Python)
 
 **Versión utilizada**: 1.24.0 o superior
 
@@ -648,7 +678,7 @@ Este proyecto utilizó las siguientes librerías de Python para la implementaci�
 **Referencia bibliográfica**:
 > Harris, C.R., Millman, K.J., van der Walt, S.J. et al. (2020). Array programming with NumPy. Nature, 585, 357–362. DOI: [10.1038/s41586-020-2649-2](https://doi.org/10.1038/s41586-020-2649-2)
 
-#### 14.1.2 SciPy (Scientific Python)
+#### SciPy (Scientific Python)
 
 **Versión utilizada**: 1.10.0 o superior
 
@@ -683,7 +713,7 @@ El módulo `scipy.optimize` implementa el algoritmo BFGS siguiendo el esquema de
 **Referencia bibliográfica**:
 > Virtanen, P., Gommers, R., Oliphant, T.E. et al. (2020). SciPy 1.0: fundamental algorithms for scientific computing in Python. Nature Methods, 17, 261–272. DOI: [10.1038/s41592-019-0686-2](https://doi.org/10.1038/s41592-019-0686-2)
 
-#### 14.1.3 Matplotlib
+#### Matplotlib
 
 **Versión utilizada**: 3.7.0 o superior
 
@@ -722,7 +752,7 @@ El módulo `scipy.optimize` implementa el algoritmo BFGS siguiendo el esquema de
 **Referencia bibliográfica**:
 > Hunter, J.D. (2007). Matplotlib: A 2D graphics environment. Computing in Science & Engineering, 9(3), 90-95. DOI: [10.1109/MCSE.2007.55](https://doi.org/10.1109/MCSE.2007.55)
 
-#### 14.1.4 Time
+#### Time
 
 **Módulo**: `time` (biblioteca estándar de Python)
 
@@ -735,7 +765,7 @@ El módulo `scipy.optimize` implementa el algoritmo BFGS siguiendo el esquema de
 
 **Documentación oficial**: [https://docs.python.org/3/library/time.html](https://docs.python.org/3/library/time.html)
 
-#### 14.1.5 JSON (JavaScript Object Notation)
+#### JSON (JavaScript Object Notation)
 
 **Módulo**: `json` (biblioteca estándar de Python)
 
@@ -750,7 +780,7 @@ El módulo `scipy.optimize` implementa el algoritmo BFGS siguiendo el esquema de
 
 **Documentación oficial**: [https://docs.python.org/3/library/json.html](https://docs.python.org/3/library/json.html)
 
-#### 14.1.6 Pathlib
+#### Pathlib
 
 **Módulo**: `pathlib` (biblioteca estándar de Python)
 
@@ -769,17 +799,12 @@ El módulo `scipy.optimize` implementa el algoritmo BFGS siguiendo el esquema de
 
 **Documentación oficial**: [https://docs.python.org/3/library/pathlib.html](https://docs.python.org/3/library/pathlib.html)
 
-### 14.2 Referencias Teóricas de los Algoritmos
+#### Referencias Teóricas de los Algoritmos
 
-#### 14.2.1 Método BFGS (Broyden-Fletcher-Goldfarb-Shanno)
+#### Método BFGS (Broyden-Fletcher-Goldfarb-Shanno)
 
 **Referencia principal**:
 > Nocedal, J., & Wright, S. J. (2006). *Numerical Optimization* (2nd ed.). Springer Series in Operations Research. ISBN: 978-0-387-30303-1
-
-**Capítulos relevantes**:
-- Capítulo 6: Quasi-Newton Methods
-- Capítulo 3: Line Search Methods
-- Sección 6.1: The BFGS Method
 
 **Artículos originales**:
 - Broyden, C.G. (1970). "The convergence of a class of double-rank minimization algorithms". *IMA Journal of Applied Mathematics*, 6(1), 76-90.
@@ -787,19 +812,15 @@ El módulo `scipy.optimize` implementa el algoritmo BFGS siguiendo el esquema de
 - Goldfarb, D. (1970). "A family of variable-metric methods derived by variational means". *Mathematics of Computation*, 24(109), 23-26.
 - Shanno, D.F. (1970). "Conditioning of quasi-Newton methods for function minimization". *Mathematics of Computation*, 24(111), 647-656.
 
-#### 14.2.2 Método del Descenso del Gradiente
+#### Método del Descenso del Gradiente
 
 **Referencia principal**:
 > Boyd, S., & Vandenberghe, L. (2004). *Convex Optimization*. Cambridge University Press. ISBN: 978-0-521-83378-3
 
-**Capítulos relevantes**:
-- Capítulo 9: Unconstrained minimization
-- Sección 9.3: Gradient descent method
-
 **Referencia clásica**:
 > Cauchy, A. (1847). "Méthode générale pour la résolution des systèmes d'équations simultanées". *Comptes Rendus de l'Académie des Sciences*, 25, 536-538.
 
-### 14.3 Implementación y Código Fuente
+### Implementación y Código Fuente
 
 **Repositorio del proyecto**: [GitHub - Optimization_Models_Project_2025](https://github.com/Rlianny/Optimization_Models_Project_2025-)
 
@@ -812,7 +833,7 @@ El módulo `scipy.optimize` implementa el algoritmo BFGS siguiendo el esquema de
 
 **Entorno de desarrollo**: Jupyter Notebook / VS Code
 
-### 14.4 Recursos Adicionales
+### Recursos Adicionales
 
 **Tutoriales y documentación de SciPy Optimize**:
 - [SciPy Lecture Notes - Optimization](https://scipy-lectures.org/advanced/mathematical_optimization/)
@@ -827,7 +848,7 @@ El módulo `scipy.optimize` implementa el algoritmo BFGS siguiendo el esquema de
 - El método del descenso del gradiente fue implementado desde cero siguiendo la formulación estándar
 - Todos los gradientes fueron verificados mediante diferencias finitas durante el desarrollo
 
-### 14.5 Licencias
+### Licencias
 
 - **NumPy**: BSD License
 - **SciPy**: BSD License  
