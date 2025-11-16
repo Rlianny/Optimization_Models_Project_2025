@@ -23,22 +23,28 @@ El proyecto incluye:
 Optimización/
 ├── README.md                           # Este archivo
 ├── Informe.md                          # Análisis teórico completo
+├── Informe.tex                         # Versión LaTeX del informe
+├── requirements.txt                    # Dependencias del proyecto
 ├── Implementation/
 │   ├── Methods_Implementation.ipynb   # Notebook con implementaciones
 │   ├── Experiments/
-│   │   ├── exp1.json                  # Configuración experimento 1
-│   │   └── exp2.json                  # Configuración experimento 2
-│   └── Results/
-│       ├── results_exp1.json          # Resultados experimento 1
-│       └── results_exp2.json          # Resultados experimento 2
+│   │   ├── exp1.json                  # Configuraciones de experimentos
+│   │   ├── exp2.json
+│   │   └── ...                        # (exp3 a exp10)
+│   ├── Results/
+│   │   ├── results_exp1.json          # Resultados de experimentos
+│   │   ├── results_exp2.json
+│   │   └── ...                        # (results_exp3 a results_exp10)
+│   └── Figures/                       # Gráficos generados por los experimentos
 ```
 
 ## Instalación
 
 ### Requisitos
 
-- Python 3.7 o superior
+- Python 3.7 o superior (probado con Python 3.8 y 3.10)
 - python3-venv (para crear entornos virtuales)
+- Sistema operativo: Linux/macOS (los comandos están optimizados para zsh/bash)
 
 ### Paso 1: Crear un Entorno Virtual
 
@@ -65,6 +71,12 @@ source venv/bin/activate
 Con el entorno virtual activado, instala las bibliotecas necesarias:
 
 ```bash
+pip install -r requirements.txt
+```
+
+Alternativamente, puedes instalar manualmente:
+
+```bash
 pip install numpy scipy matplotlib jupyter
 ```
 
@@ -82,6 +94,34 @@ Cuando termines de trabajar:
 ```bash
 deactivate
 ```
+
+## Quick Start
+
+Si ya tienes el entorno configurado, estos comandos te permitirán ejecutar rápidamente el proyecto:
+
+```bash
+# Navegar al proyecto y activar el entorno virtual
+cd /media/lianny/1AB44624B44602AD/projects/Optimización
+source venv/bin/activate
+
+# Instalar dependencias (solo la primera vez)
+pip install -r requirements.txt
+
+# Abrir el notebook interactivamente
+cd Implementation
+jupyter notebook Methods_Implementation.ipynb
+```
+
+### Ejecutar el Notebook sin Interfaz Gráfica
+
+Para ejecutar todos los experimentos de forma automatizada (útil para reproducibilidad):
+
+```bash
+cd Implementation
+jupyter nbconvert --to notebook --execute Methods_Implementation.ipynb --inplace
+```
+
+> **Nota**: La ejecución puede tardar varios minutos dependiendo del número de experimentos y configuraciones.
 
 ## Uso
 
@@ -123,7 +163,7 @@ Esta función:
 
 ### 3. Configurar Nuevos Experimentos
 
-Para crear un nuevo experimento, añade un archivo JSON en la carpeta `Experiments/`:
+Para crear un nuevo experimento, añade un archivo JSON en la carpeta `Experiments/` con el formato `exp<N>.json`:
 
 ```json
 [
@@ -135,6 +175,14 @@ Para crear un nuevo experimento, añade un archivo JSON en la carpeta `Experimen
     }
 ]
 ```
+
+> **Importante**: El archivo debe contener un array JSON con un objeto de configuración. El nombre del archivo debe seguir el patrón `exp<número>.json` (ej: `exp11.json`, `exp12.json`).
+
+Después de crear el archivo de configuración:
+
+1. Abre el notebook `Methods_Implementation.ipynb`
+2. Ejecuta la celda que contiene `MakeExperiments()`
+3. Los resultados se guardarán automáticamente en `Results/results_exp<N>.json`
 
 **Parámetros**:
 - `learning_rate`: Tasa de aprendizaje para Gradient Descent (0.001 - 0.1)
@@ -148,6 +196,41 @@ Los resultados se visualizan automáticamente al ejecutar las celdas de visualiz
 
 - **Gráficos de contorno**: Muestran las curvas de nivel y las trayectorias de optimización
 - **Análisis comparativo**: Tabla con iteraciones, tiempos, valores finales y distancia al óptimo
+
+### Ejemplo de Archivo de Resultados
+
+Los archivos en `Results/` tienen la siguiente estructura:
+
+```json
+{
+  "config": {
+    "learning_rate": 0.1,
+    "tol": 1e-6,
+    "max_iter": 1000,
+    "x0": [0.5, 0.5]
+  },
+  "gradient_descent": {
+    "x_opt": [1.0000123, 1.4142089],
+    "f_opt": 2.3456e-8,
+    "iterations": 245,
+    "execution_time": 0.0123,
+    "trajectory": [[0.5, 0.5], [0.55, 0.58], ...]
+  },
+  "bfgs": {
+    "x_opt": [1.0, 1.4142135],
+    "f_opt": 1.234e-12,
+    "iterations": 12,
+    "execution_time": 0.0045,
+    "trajectory": [[0.5, 0.5], [0.92, 1.31], ...]
+  },
+  "theoretical_minimum": {
+    "x": [1.0, 1.4142135623730951],
+    "f": 0.0
+  }
+}
+```
+
+La carpeta `Results/` se crea automáticamente al ejecutar los experimentos.
 
 ## Descripción de los Métodos
 

@@ -380,7 +380,6 @@ El resultado más crítico del estudio: **Gradient Descent falló en 5 de 10 exp
 
 **Figura 2:** Experimento 1 con punto inicial $(0.5, 0.5)$ en región no convexa. El panel izquierdo muestra Gradient Descent convergiendo en 31 iteraciones con trayectoria menos directa. El panel derecho presenta BFGS alcanzando convergencia en solo 8 iteraciones con trayectoria significativamente más eficiente hacia el mínimo global en $(1, \sqrt{2})$.
 
-
 ![Divergencia catastrófica de Gradient Descent - Experimento 3: Punto inicial extremo](Implementation/Figures/results_exp3_exp1_comparison.png)
 
 **Figura 3 (Ejemplo de Divergencia):** Experimento 3 con punto inicial extremo $(100, 100)$ evidenciando el fallo crítico de Gradient Descent. El panel izquierdo muestra la divergencia catastrófica por overflow numérico, mientras el panel derecho demuestra que BFGS maneja exitosamente esta situación convergiendo en 42 iteraciones.
